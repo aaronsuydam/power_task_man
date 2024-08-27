@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/power_task_man/.vs/power_task_man
+/power_task_man/bin/x86/Debug/net8.0-windows10.0.19041.0/win-x86
+/power_task_man/obj

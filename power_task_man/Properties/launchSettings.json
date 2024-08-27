@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "power_task_man (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "power_task_man (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
