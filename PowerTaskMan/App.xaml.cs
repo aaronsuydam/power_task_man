@@ -6,6 +6,7 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using power_task_man.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +27,8 @@ namespace power_task_man
     /// </summary>
     public partial class App : Application
     {
+
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -33,6 +36,7 @@ namespace power_task_man
         public App()
         {
             this.InitializeComponent();
+           
         }
 
         /// <summary>

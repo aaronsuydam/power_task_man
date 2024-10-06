@@ -8,14 +8,14 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="7450ee6c-4166-43b7-bfb0-ee3cec8534da"
+    Name="be921df3-d2ea-40e7-b729-4ce648be689a"
     Publisher="CN=suyda"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="7450ee6c-4166-43b7-bfb0-ee3cec8534da" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="be921df3-d2ea-40e7-b729-4ce648be689a" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>power_task_man</DisplayName>
+    <DisplayName>PowerTaskMan</DisplayName>
     <PublisherDisplayName>suyda</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -34,8 +34,8 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="$targetentrypoint$">
       <uap:VisualElements
-        DisplayName="power_task_man"
-        Description="power_task_man"
+        DisplayName="PowerTaskMan"
+        Description="PowerTaskMan"
         BackgroundColor="transparent"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png">

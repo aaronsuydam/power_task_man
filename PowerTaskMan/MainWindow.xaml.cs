@@ -5,6 +5,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using power_task_man.Pages;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Networking.NetworkOperators;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -31,6 +33,26 @@ namespace power_task_man
         private void myButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
+        {
+            if (args.SelectedItem is NavigationViewItem selectedItem)
+            {
+                string selectedTag = selectedItem.Tag.ToString();
+
+                // Navigate to the appropriate page
+                switch (selectedTag)
+                {
+                    case "HomePage":
+                        mainNVContentFrame.Navigate(typeof(PerformancePage));
+                        break;
+                    case "SettingsPage":
+                        mainNVContentFrame.Navigate(typeof(SettingsPage));
+                        break;
+ 
+                }
+            }
         }
     }
 }
