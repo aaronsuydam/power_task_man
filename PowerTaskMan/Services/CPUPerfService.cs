@@ -1,6 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using Microsoft.UI.Dispatching;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -15,8 +20,10 @@ namespace power_task_man.Services
         [ObservableProperty]
         UInt32 current_frequency = 0;
 
-        [ObservableProperty]
-        List<UInt32> frequency_history = new();
+        Collection<int> frequencyHistory = new();
+
+
+        public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
 
 
 
@@ -48,6 +55,7 @@ namespace power_task_man.Services
             cpu_freq = new();
             Task.Run(() =>
             {
+                var dq = DispatcherQueue.GetForCurrentThread();
                 while (true)
                 {
                     if (cpu_freq.IsCancellationRequested)
@@ -55,7 +63,8 @@ namespace power_task_man.Services
                         return;
                     }
                     int clock_speed_mhz = QueryCPUFreq();
-                    frequency_history.Add((uint)clock_speed_mhz);
+                    frequencyHistory.Add((int)clock_speed_mhz);
+                    UpdateChart();
                     Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_mhz);
                     Thread.Sleep(100);
                 }
@@ -74,5 +83,28 @@ namespace power_task_man.Services
             int frequency = (int)(cpuPerformance * max_freq);
             return frequency;
         }
+
+        void UpdateChart()
+        {
+            if(FrequencyHistoryChartSeries.Count == 0)
+            {
+                FrequencyHistoryChartSeries.Add(
+                    new LineSeries<int>
+                    {
+                        Values = frequencyHistory
+                    }
+                );
+            }
+            else
+            {
+                FrequencyHistoryChartSeries[0].Values = frequencyHistory;
+            }
+
+
+            
+           
+        }
+
+
     }
 }
