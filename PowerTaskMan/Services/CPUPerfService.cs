@@ -1,7 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.UI.Dispatching;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,9 +20,12 @@ namespace power_task_man.Services
     {
 
         [ObservableProperty]
-        UInt32 current_frequency = 0;
+        int current_frequency = 0;
 
         Collection<int> frequencyHistory = new();
+
+        [ObservableProperty]
+        int updateSpeedMilliseconds = 1000;
 
 
         public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
@@ -55,7 +60,7 @@ namespace power_task_man.Services
             cpu_freq = new();
             Task.Run(() =>
             {
-                var dq = DispatcherQueue.GetForCurrentThread();
+        
                 while (true)
                 {
                     if (cpu_freq.IsCancellationRequested)
@@ -63,10 +68,16 @@ namespace power_task_man.Services
                         return;
                     }
                     int clock_speed_mhz = QueryCPUFreq();
-                    frequencyHistory.Add((int)clock_speed_mhz);
+                    if(clock_speed_mhz != 0)
+                    {
+                        frequencyHistory.Add((int)clock_speed_mhz);
+                    }
+                 
                     UpdateChart();
+                
                     Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_mhz);
-                    Thread.Sleep(100);
+                    this.current_frequency = clock_speed_mhz;
+                    Thread.Sleep(updateSpeedMilliseconds);
                 }
                 
             });
@@ -80,7 +91,7 @@ namespace power_task_man.Services
         public int QueryCPUFreq()
         {
             float cpuPerformance = cpuClockCounter.NextValue();
-            int frequency = (int)(cpuPerformance * max_freq);
+            int frequency = (int)(cpuPerformance * max_freq * 10); // Frequency is in kHz
             return frequency;
         }
 
@@ -91,13 +102,18 @@ namespace power_task_man.Services
                 FrequencyHistoryChartSeries.Add(
                     new LineSeries<int>
                     {
-                        Values = frequencyHistory
+                        Values = frequencyHistory,
+                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2},
+                        Fill = null,
+                        GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        LineSmoothness = 0.1
                     }
                 );
             }
             else
             {
-                FrequencyHistoryChartSeries[0].Values = frequencyHistory;
+                FrequencyHistoryChartSeries[0].Values = frequencyHistory.Select(x => x / 1000).ToArray();
             }
 
 

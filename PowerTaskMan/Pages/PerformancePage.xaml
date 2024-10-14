@@ -64,7 +64,7 @@
                     x:Name="CPUFrequencyLabel"
                     Grid.Row="1"
                     Grid.Column="0"
-                    Text="{x:Bind CPUFrequency}" />
+                    Text="{x:Bind cpuPerfService.Current_frequency}" />
 
 
                 <lvc:CartesianChart Grid.RowSpan="2" Grid.Column="1" Series="{x:Bind cpuPerfService.FrequencyHistoryChartSeries}" />
