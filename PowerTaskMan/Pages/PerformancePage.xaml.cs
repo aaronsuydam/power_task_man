@@ -17,6 +17,9 @@ using Microsoft.UI.Xaml.Data;
 using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -37,12 +40,36 @@ namespace power_task_man.Pages
         {
             this.InitializeComponent();
             this.DataContext = cpuPerfService;
-            this.cpuPerfService.StartCPUFreqMonitoring();     
+
+            SetupChart();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.cpuPerfService.StartCPUFreqMonitoring();
+            this.cpuPerfService.StartCPUFreqMonitoring(this.DispatcherQueue);
+        }
+
+        private void SetupChart()
+        {
+            var x_axis = new Axis
+            {
+                MaxLimit = 60,
+                MinLimit = 0,
+                Name = "Time (seconds)",
+                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+
+            };
+
+            var y_axis = new Axis
+            {
+                MaxLimit = 6000,
+                MinLimit = 3000,
+                Name = "CPU Frequency (MHz)",
+                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+            };
+
+            FrequencyChart.XAxes = new List<Axis> { x_axis };
+            FrequencyChart.YAxes = new List<Axis> { y_axis };
         }
     }
 }

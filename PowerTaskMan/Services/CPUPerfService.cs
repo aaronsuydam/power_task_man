@@ -20,12 +20,14 @@ namespace power_task_man.Services
     {
 
         [ObservableProperty]
-        int current_frequency = 0;
+        string currentFrequency = "";
 
         Collection<int> frequencyHistory = new();
 
         [ObservableProperty]
-        int updateSpeedMilliseconds = 1000;
+        int updateSpeedMilliseconds = 500;
+
+        private Task CPUFrequencyMonitoringLoop;
 
 
         public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
@@ -55,10 +57,16 @@ namespace power_task_man.Services
             }
         }
 
-        public void StartCPUFreqMonitoring()
+        public void StartCPUFreqMonitoring(DispatcherQueue dq)
         {
+            if(CPUFrequencyMonitoringLoop != null)
+            {
+                return;
+            }
+
             cpu_freq = new();
-            Task.Run(() =>
+
+            CPUFrequencyMonitoringLoop = Task.Run(() =>
             {
         
                 while (true)
@@ -67,17 +75,20 @@ namespace power_task_man.Services
                     {
                         return;
                     }
-                    int clock_speed_mhz = QueryCPUFreq();
-                    if(clock_speed_mhz != 0)
+                    int clock_speed_khz = QueryCPUFreq();
+                    if(clock_speed_khz != 0)
                     {
-                        frequencyHistory.Add((int)clock_speed_mhz);
+                        frequencyHistory.Add((int)clock_speed_khz);
                     }
                  
                     UpdateChart();
                 
-                    Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_mhz);
-                    this.current_frequency = clock_speed_mhz;
-                    Thread.Sleep(updateSpeedMilliseconds);
+                    Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_khz);
+                    dq.TryEnqueue(() =>
+                    {
+                        CurrentFrequency = ((double) (clock_speed_khz/1000)/1000).ToString() + " GHz";
+                    });
+                    Thread.Sleep(UpdateSpeedMilliseconds);
                 }
                 
             });
@@ -103,17 +114,18 @@ namespace power_task_man.Services
                     new LineSeries<int>
                     {
                         Values = frequencyHistory,
-                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2},
+                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
                         Fill = null,
                         GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
                         GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        GeometrySize = 5,
                         LineSmoothness = 0.1
                     }
                 );
             }
             else
             {
-                FrequencyHistoryChartSeries[0].Values = frequencyHistory.Select(x => x / 1000).ToArray();
+                FrequencyHistoryChartSeries[0].Values = frequencyHistory.Select(x => x / 1000).TakeLast(60).ToArray();
             }
 
 
