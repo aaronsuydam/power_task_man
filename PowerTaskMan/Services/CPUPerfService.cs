@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace power_task_man.Services
 {
-    internal partial class CPUPerfService : ObservableObject
+    public partial class CPUPerfService : ObservableObject
     {
 
         [ObservableProperty]

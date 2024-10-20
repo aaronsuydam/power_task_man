@@ -20,6 +20,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using PowerTaskMan.Services;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,15 +34,17 @@ namespace power_task_man.Pages
     public partial class PerformancePage : Page
     {
 
-        internal CPUPerfService cpuPerfService = new();
+        public CPUPerfService cpuPerfService { get; set; } = new();
+        public MemoryService memoryService { get; set; } = new();
         public string CPUFrequency { get; set; } = "Something";
 
         public PerformancePage()
         {
             this.InitializeComponent();
-            this.DataContext = cpuPerfService;
+            this.DataContext = this;
 
-            SetupChart();
+            SetupCPUChart();
+            SetupMemoryChart();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -49,7 +52,7 @@ namespace power_task_man.Pages
             this.cpuPerfService.StartCPUFreqMonitoring(this.DispatcherQueue);
         }
 
-        private void SetupChart()
+        private void SetupCPUChart()
         {
             var x_axis = new Axis
             {
@@ -70,6 +73,34 @@ namespace power_task_man.Pages
 
             FrequencyChart.XAxes = new List<Axis> { x_axis };
             FrequencyChart.YAxes = new List<Axis> { y_axis };
+        }
+
+        private void SetupMemoryChart()
+        {
+            var x_axis = new Axis
+            {
+                MaxLimit = 60,
+                MinLimit = 0,
+                Name = "Time (seconds)",
+                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+
+            };
+
+            var y_axis = new Axis
+            {
+                MaxLimit = 100,
+                MinLimit = 0,
+                Name = "Memory In Use (%)",
+                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+            };
+
+            MemoryChart.XAxes = new List<Axis> { x_axis };
+            MemoryChart.YAxes = new List<Axis> { y_axis };
+        }
+
+        private void MemoryButtonClick(object sender, RoutedEventArgs e)
+        {
+            memoryService.StartMemoryMonitoring(this.DispatcherQueue);
         }
     }
 }
