@@ -38,6 +38,10 @@ namespace power_task_man.Pages
         public MemoryService memoryService { get; set; } = new();
         public string CPUFrequency { get; set; } = "Something";
 
+        public List<Axis> XAxes {get; set;}
+        public List<Axis> YAxes { get; set; }
+
+
         public PerformancePage()
         {
             this.InitializeComponent();
@@ -71,8 +75,8 @@ namespace power_task_man.Pages
                 NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
             };
 
-            FrequencyChart.XAxes = new List<Axis> { x_axis };
-            FrequencyChart.YAxes = new List<Axis> { y_axis };
+            //FrequencyChart.XAxes = new List<Axis> { x_axis };
+            //FrequencyChart.YAxes = new List<Axis> { y_axis };
         }
 
         private void SetupMemoryChart()
@@ -86,6 +90,9 @@ namespace power_task_man.Pages
 
             };
 
+            this.XAxes = new List<Axis> { x_axis };
+            
+
             var y_axis = new Axis
             {
                 MaxLimit = 100,
@@ -93,6 +100,8 @@ namespace power_task_man.Pages
                 Name = "Memory In Use (%)",
                 NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
             };
+
+            this.YAxes = new List<Axis> { y_axis };
 
             MemoryChart.XAxes = new List<Axis> { x_axis };
             MemoryChart.YAxes = new List<Axis> { y_axis };
