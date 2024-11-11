@@ -64,6 +64,31 @@ namespace PowerTaskMan.Controls
             set => SetValue(DataLabelProperty, value);
         }
 
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+            nameof(Title),
+            typeof(string),
+            typeof(GraphControl),
+            new PropertyMetadata(null, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+            {
+                var gc = d as GraphControl;
+                gc.Title = e.NewValue?.ToString() ?? "";
+            }));
+
+        public string Title { get; set; } = "Graph";
+
+        // New Dependency Property for Easing Function
+        public static readonly DependencyProperty EasingFunctionProperty = DependencyProperty.Register(
+            nameof(EasingFunction),
+            typeof(Func<float, float>),
+            typeof(GraphControl),
+            new PropertyMetadata(null, OnEasingFunctionChanged));
+
+        public Func<float, float> EasingFunction
+        {
+            get => (Func<float, float>)GetValue(EasingFunctionProperty);
+            set => SetValue(EasingFunctionProperty, value);
+        }
+
 
         private static void OnGraphSeriesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -111,8 +136,18 @@ namespace PowerTaskMan.Controls
             }
         }
 
+        private static void OnEasingFunctionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is GraphControl control && control._chart != null)
+            {
+                // Apply the new easing function to the chart (if applicable)
+                control._chart.EasingFunction = control.EasingFunction;
+            }
+        }
+
         private CartesianChart? _chart;
         private TextBlock? _dataLabel;
+        private TextBlock? _title;
 
         protected override void OnApplyTemplate()
         {
@@ -132,6 +167,9 @@ namespace PowerTaskMan.Controls
                 {
                     _chart.YAxes = YAxes;
                 }
+
+                _chart.EasingFunction = EasingFunction;
+                
             }
             else
             {
@@ -142,6 +180,12 @@ namespace PowerTaskMan.Controls
             if (_dataLabel != null)
             {
                 _dataLabel.Text = DataLabel;
+            }
+
+            _title = GetTemplateChild("ChartTitleTextBlock") as TextBlock;
+            if(_title != null)
+            {
+                _title.Text = Title;
             }
         }
 

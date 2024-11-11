@@ -3,8 +3,10 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.UI.Dispatching;
+using PowerTaskMan.Common;
 using SkiaSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -16,33 +18,28 @@ using System.Threading.Tasks;
 
 namespace power_task_man.Services
 {
-    public partial class CPUPerfService : ObservableObject
+    public partial class CPUPerfService
     {
-
-        [ObservableProperty]
-        string currentFrequency = "";
-
         Collection<int> frequencyHistory = new();
-
-        [ObservableProperty]
-        int updateSpeedMilliseconds = 500;
-
-        private Task CPUFrequencyMonitoringLoop;
-
 
         public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
 
-
-
         CancellationTokenSource cpu_freq;
-        PerformanceCounter cpuClockCounter = new PerformanceCounter("Processor Information", "% Processor Performance", "_Total");
 
+        public List<CPUCore> cores;
 
         UInt32 max_freq = 0;
 
-
         public CPUPerfService()
         {
+            int core_count = Environment.ProcessorCount;
+
+            cores = new List<CPUCore>();
+            for (int i = 0; i < core_count; i++)
+            {
+                cores.Add(new CPUCore(i));
+            }
+
             // Retrieve the maximum clock speed of the cpu from WMI and store it
             // Create a ManagementObjectSearcher to query Win32_Processor
             ManagementObjectSearcher searcher = new ManagementObjectSearcher("select MaxClockSpeed, CurrentClockSpeed, Name from Win32_Processor");
@@ -57,81 +54,28 @@ namespace power_task_man.Services
             }
         }
 
-        public void StartCPUFreqMonitoring(DispatcherQueue dq)
+        /// <summary>
+        /// Returns a list of the per-core CPU frequencies in kHz
+        /// </summary>
+        /// <returns></returns>
+        public void UpdateFrequencies()
         {
-            if(CPUFrequencyMonitoringLoop != null)
+
+            foreach (var core in cores)
             {
-                return;
+                float cpuPerformance = core.frequency.NextValue();
+                UInt64 frequency_hz = ((UInt64)(cpuPerformance * max_freq * 10 * 1000)); // Frequency is in kHz
+                core.CoreFrequency = frequency_hz;
+
+                float utilization = core.utilization.NextValue();
+                core.CoreUtilizationPercent = (UInt64)utilization;
             }
-
-            cpu_freq = new();
-
-            CPUFrequencyMonitoringLoop = Task.Run(() =>
-            {
-        
-                while (true)
-                {
-                    if (cpu_freq.IsCancellationRequested)
-                    {
-                        return;
-                    }
-                    int clock_speed_khz = QueryCPUFreq();
-                    if(clock_speed_khz != 0)
-                    {
-                        frequencyHistory.Add((int)clock_speed_khz);
-                    }
-                 
-                    UpdateChart();
-                
-                    Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_khz);
-                    dq.TryEnqueue(() =>
-                    {
-                        CurrentFrequency = ((double) (clock_speed_khz/1000)/1000).ToString() + " GHz";
-                    });
-                    Thread.Sleep(UpdateSpeedMilliseconds);
-                }
-                
-            });
-        }
-
-        public void StopCPUFreqMonitoring()
-        {
-            cpu_freq.Cancel();
-        }
-
-        public int QueryCPUFreq()
-        {
-            float cpuPerformance = cpuClockCounter.NextValue();
-            int frequency = (int)(cpuPerformance * max_freq * 10); // Frequency is in kHz
-            return frequency;
-        }
-
-        void UpdateChart()
-        {
-            if(FrequencyHistoryChartSeries.Count == 0)
-            {
-                FrequencyHistoryChartSeries.Add(
-                    new LineSeries<int>
-                    {
-                        Values = frequencyHistory,
-                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
-                        Fill = null,
-                        GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometrySize = 5,
-                        LineSmoothness = 0.1
-                    }
-                );
-            }
-            else
-            {
-                FrequencyHistoryChartSeries[0].Values = frequencyHistory.Select(x => x / 1000).TakeLast(60).ToArray();
-            }
-
 
             
-           
+
+            // Return the result as a list of frequencies for each core (if needed)
         }
+
 
 
     }

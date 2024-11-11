@@ -27,14 +27,14 @@ namespace PowerTaskMan.Performance
 
 }
 
-
-
-
 namespace PowerTaskMan.Services
 {
     public partial class MemoryService
     {
         PerformanceCounter availableMemoryPC = new PerformanceCounter("Memory", "Available MBytes");
+        PerformanceCounter readCounter = new PerformanceCounter("Memory", "Page Reads/sec");
+        PerformanceCounter writeCounter = new PerformanceCounter("Memory", "Page Writes/sec");
+
 
         CancellationTokenSource memoryMonitoring =  new();
 
@@ -42,7 +42,8 @@ namespace PowerTaskMan.Services
         private int totalMemoryMB = 0;
         private int availableMemory = 0;
         private int usedMemoryPercent = 0;
-
+        private int page_reads_sec = 0;
+        private int page_writes_sec = 0;
 
         public MemoryService()
         {

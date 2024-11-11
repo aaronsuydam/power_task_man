@@ -21,6 +21,9 @@ using System.Collections.Generic;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 using PowerTaskMan.Services;
+using PowerTaskMan.ViewModels;
+using Windows.UI.ViewManagement;
+using PowerTaskMan.Common;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -33,83 +36,84 @@ namespace power_task_man.Pages
 
     public partial class PerformancePage : Page
     {
-
-        public CPUPerfService cpuPerfService { get; set; } = new();
-        public MemoryService memoryService { get; set; } = new();
         public string CPUFrequency { get; set; } = "Something";
 
-        public List<Axis> XAxes {get; set;}
-        public List<Axis> YAxes { get; set; }
+        public PerformanceViewModel viewModel { get; set; } = new();
+
+        public List<Axis> MemoryChartXAxes {get; set;}
+        public List<Axis> MemoryChartYAxes { get; set; }
+
+        public List<Axis> FrequencyChartXAxes { get; set; }
+        public List<Axis> FrequencyChartYAxes { get; set; }
 
 
         public PerformancePage()
         {
             this.InitializeComponent();
-            this.DataContext = this;
+            this.DataContext = viewModel;
 
             SetupCPUChart();
             SetupMemoryChart();
+            this.viewModel.BeginMonitoring(this.DispatcherQueue);
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            this.cpuPerfService.StartCPUFreqMonitoring(this.DispatcherQueue);
+            this.viewModel.BeginMonitoring(this.DispatcherQueue);
         }
 
         private void SetupCPUChart()
         {
+            SKColor font_color = ThemeHelpers.GetTextThemeColor();
             var x_axis = new Axis
             {
                 MaxLimit = 60,
                 MinLimit = 0,
                 Name = "Time (seconds)",
-                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+                NamePaint = new SolidColorPaint(font_color) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
 
             };
 
             var y_axis = new Axis
             {
                 MaxLimit = 6000,
-                MinLimit = 3000,
-                Name = "CPU Frequency (MHz)",
-                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+                MinLimit = 1000,
+                ForceStepToMin = true,
+                MinStep = 2000
             };
 
-            //FrequencyChart.XAxes = new List<Axis> { x_axis };
-            //FrequencyChart.YAxes = new List<Axis> { y_axis };
+            FrequencyChartXAxes = new List<Axis> { x_axis };
+            FrequencyChartYAxes = new List<Axis> { y_axis };
         }
 
         private void SetupMemoryChart()
         {
+            SKColor font_color = ThemeHelpers.GetTextThemeColor();
+            
             var x_axis = new Axis
             {
                 MaxLimit = 60,
                 MinLimit = 0,
                 Name = "Time (seconds)",
-                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
+                NamePaint = new SolidColorPaint(font_color) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
 
             };
 
-            this.XAxes = new List<Axis> { x_axis };
+            this.MemoryChartXAxes = new List<Axis> { x_axis };
             
 
             var y_axis = new Axis
             {
                 MaxLimit = 100,
                 MinLimit = 0,
-                Name = "Memory In Use (%)",
-                NamePaint = new SolidColorPaint(SKColors.White) { SKTypeface = SKTypeface.FromFamilyName("Aptos") }, // Title color and font
             };
 
-            this.YAxes = new List<Axis> { y_axis };
-
-            MemoryChart.XAxes = new List<Axis> { x_axis };
-            MemoryChart.YAxes = new List<Axis> { y_axis };
+            this.MemoryChartYAxes = new List<Axis> { y_axis };
         }
 
         private void MemoryButtonClick(object sender, RoutedEventArgs e)
         {
-            memoryService.StartMemoryMonitoring(this.DispatcherQueue);
+            viewModel.BeginMonitoring(this.DispatcherQueue);
         }
     }
 }
