@@ -9,13 +9,16 @@
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt" /> 
+        <MicaBackdrop Kind="BaseAlt" />
         <!--  Use a more immersive mica kind.  -->
     </Window.SystemBackdrop>
 
     <NavigationView SelectionChanged="NavigationView_SelectionChanged">
         <NavigationView.MenuItems>
-            <NavigationViewItem Content="Home" Icon="Home" Tag="HomePage" />
+            <NavigationViewItem
+                Content="Home"
+                Icon="Home"
+                Tag="HomePage" />
         </NavigationView.MenuItems>
         <Frame x:Name="mainNVContentFrame" />
     </NavigationView>

@@ -43,11 +43,9 @@ namespace PowerTaskMan.ViewModels
         [ObservableProperty]
         string currentFrequency = "0.0 GHz";
 
-
-
-
         private Task memory_monitor_loop;
         private Task cpu_monitor_loop;
+        private Task cpu_utilization_loop;
 
         private CancellationTokenSource cpu_cts;
         private CancellationTokenSource memory_cts;
@@ -57,9 +55,13 @@ namespace PowerTaskMan.ViewModels
 
         public ObservableCollection<ISeries> MemoryUseChartSeries { get; set; } = new();
 
+        public ObservableCollection<ObservableCollection<ISeries>> UtilizationChartSeriesCollection { get; set; }
+
         public PerformanceViewModel()
         {
-            
+            UtilizationChartSeriesCollection = new ObservableCollection<ObservableCollection<ISeries>>(
+                Enumerable.Range(0, cpuPerfService.cores.Count()).Select(_ => new ObservableCollection<ISeries>())
+            );
         }
 
         public void BeginMonitoring(DispatcherQueue dq)
@@ -84,6 +86,20 @@ namespace PowerTaskMan.ViewModels
                     Task.Delay(500).Wait();
                 }
             });
+
+            cpu_utilization_loop = Task.Run(() =>
+            {
+                while (true)
+                {
+                    cpuPerfService.UpdateUtilizations();
+                    dq.TryEnqueue(() =>
+                    {
+                        UpdateCPUUtilizationChart();
+                    });
+                    Task.Delay(500).Wait();
+                }
+            });
+
 
             StartCPUFreqMonitoring(dq);
         }
@@ -183,11 +199,32 @@ namespace PowerTaskMan.ViewModels
                 values.Add(new_clock_mhz);
                 FrequencyHistoryChartSeries[0].Values = values;
             }
-
-
-
-
         }
 
+        void UpdateCPUUtilizationChart()
+        {
+            if (UtilizationChartSeriesCollection.Count == 0)
+            {
+                UtilizationChartSeriesCollection.Add(
+                    new LineSeriesCollection<int>
+                    {
+                        Values = new int[60],
+                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
+                        Fill = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
+                        GeometrySize = 5,
+                        LineSmoothness = 0.1
+                    }
+                );
+            }
+            else
+            {
+                var values = UtilizationChartSeriesCollection[0].Values.Cast<int>().ToList();
+                values.RemoveAt(0);
+                values.Add(UsedMemoryPercent);
+                UtilizationChartSeriesCollection[0].Values = values;
+            }
+        }
     }
 }

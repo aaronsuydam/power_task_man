@@ -1,27 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using LiveChartsCore;
-using LiveChartsCore.SkiaSharpView;
-using LiveChartsCore.SkiaSharpView.Painting;
-using Microsoft.UI.Dispatching;
+﻿using LiveChartsCore;
 using PowerTaskMan.Common;
-using SkiaSharp;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Linq;
 using System.Management;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace power_task_man.Services
 {
     public partial class CPUPerfService
     {
-        Collection<int> frequencyHistory = new();
-
         public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
 
         CancellationTokenSource cpu_freq;
@@ -60,23 +49,21 @@ namespace power_task_man.Services
         /// <returns></returns>
         public void UpdateFrequencies()
         {
-
             foreach (var core in cores)
             {
                 float cpuPerformance = core.frequency.NextValue();
                 UInt64 frequency_hz = ((UInt64)(cpuPerformance * max_freq * 10 * 1000)); // Frequency is in kHz
                 core.CoreFrequency = frequency_hz;
-
-                float utilization = core.utilization.NextValue();
-                core.CoreUtilizationPercent = (UInt64)utilization;
             }
-
-            
-
-            // Return the result as a list of frequencies for each core (if needed)
         }
 
-
-
+        public void UpdateUtilizations()
+        {
+            foreach (var core in cores)
+            {
+                float utilization = core.utilization.NextValue();
+                core.CoreUtilizationPercent = utilization;
+            }
+        }
     }
 }
