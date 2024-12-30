@@ -10,14 +10,14 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     mc:Ignorable="d">
-    
+
     <Grid Margin="20" ColumnSpacing="200">
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
+
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="2.5*" />
@@ -38,14 +38,14 @@
             BorderBrush="DarkGray"
             BorderThickness="1"
             CornerRadius="5">
-            
+
             <controls:GraphControl
                 Title="Memory Use (%)"
                 DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
                 GraphSeries="{x:Bind viewModel.MemoryUseChartSeries}"
                 XAxes="{x:Bind MemoryChartXAxes}"
                 YAxes="{x:Bind MemoryChartYAxes}" />
-            
+
         </Border>
 
         <Border
@@ -55,7 +55,7 @@
             BorderBrush="DarkGray"
             BorderThickness="1"
             CornerRadius="5">
-            
+
             <controls:GraphControl
                 Title="CPU Frequency (X.XXX GHz)"
                 DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
@@ -71,25 +71,6 @@
             Grid.ColumnSpan="2"
             BorderBrush="DarkGray"
             BorderThickness="1"
-            CornerRadius="5">
-            
-            <ItemsControl ItemsSource="{x:Bind viewModel.DynamicGraphs}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Grid Columns="2" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <controls:GraphControl
-                            Title="{Binding Title}"
-                            DataLabel="{Binding DataLabel}"
-                            GraphSeries="{Binding GraphSeries}"
-                            XAxes="{Binding XAxes}"
-                            YAxes="{Binding YAxes}" />
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
+            CornerRadius="5" />
     </Grid>
 </Page>

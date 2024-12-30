@@ -18,7 +18,11 @@
             <NavigationViewItem
                 Content="Home"
                 Icon="Home"
-                Tag="HomePage" />
+                Tag="OverviewPage" />
+            <NavigationViewItem
+                Content="Performance"
+                Icon="Volume"
+                Tag="PerformancePage" />
         </NavigationView.MenuItems>
         <Frame x:Name="mainNVContentFrame" />
     </NavigationView>

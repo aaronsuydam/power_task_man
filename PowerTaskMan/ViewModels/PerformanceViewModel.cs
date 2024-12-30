@@ -206,24 +206,27 @@ namespace PowerTaskMan.ViewModels
             if (UtilizationChartSeriesCollection.Count == 0)
             {
                 UtilizationChartSeriesCollection.Add(
-                    new LineSeriesCollection<int>
+                    new ObservableCollection<ISeries>()
                     {
-                        Values = new int[60],
-                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
-                        Fill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometrySize = 5,
-                        LineSmoothness = 0.1
+                        new LineSeries<int>
+                        {
+                            Values = new int[60],
+                            Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
+                            Fill = new SolidColorPaint(SKColor.Parse("2196f3")),
+                            GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
+                            GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
+                            GeometrySize = 5,
+                            LineSmoothness = 0.1
+                        }
                     }
                 );
             }
             else
             {
-                var values = UtilizationChartSeriesCollection[0].Values.Cast<int>().ToList();
+                var values = UtilizationChartSeriesCollection[0][0].Values.Cast<int>().ToList();
                 values.RemoveAt(0);
                 values.Add(UsedMemoryPercent);
-                UtilizationChartSeriesCollection[0].Values = values;
+                UtilizationChartSeriesCollection[0][0].Values = values;
             }
         }
     }

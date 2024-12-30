@@ -44,7 +44,10 @@ namespace power_task_man
                 // Navigate to the appropriate page
                 switch (selectedTag)
                 {
-                    case "HomePage":
+                    case "OverviewPage":
+                        mainNVContentFrame.Navigate(typeof(OverviewPage));
+                        break;
+                    case "PerformancePage":
                         mainNVContentFrame.Navigate(typeof(PerformancePage));
                         break;
                     case "SettingsPage":

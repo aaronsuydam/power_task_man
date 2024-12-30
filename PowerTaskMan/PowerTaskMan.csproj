@@ -11,11 +11,11 @@
     <PublishProfile>win-$(Platform).pubxml</PublishProfile>
     <UseWinUI>true</UseWinUI>
     <EnableMsixTooling>true</EnableMsixTooling>
-    <WindowsSdkPackageVersion>10.0.22621.34</WindowsSdkPackageVersion>
 
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Controls\GraphControlResource.xaml" />
+    <None Remove="Controls\GraphControlWin2D.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,12 +29,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-rc3.3" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240802000" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="8.0.0" />
-    <PackageReference Include="System.Management" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.1" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.6.241114003" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.0" />
+    <PackageReference Include="System.Management" Version="9.0.0" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -45,6 +46,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\GraphControlWin2D.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\GraphControlResource.xaml">
