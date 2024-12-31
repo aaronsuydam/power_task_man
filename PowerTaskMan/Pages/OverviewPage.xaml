@@ -10,7 +10,7 @@
     mc:Ignorable="d">
 
     <Grid>
-        <TextBlock Text="Hello"/>
-        <local:GraphControlWin2D></local:GraphControlWin2D>
-    </Grid>
+        <local:GraphControlWin2D x:Name="GraphControl1" Height="500" Width="200" DataPoints="{x:Bind DataPoints, Mode=OneWay}" UseIndexBasedGraphing="True"/>
+        <Button x:Name="DataChange" Content="Something" Click="DataChange_Click"/>
+    </Grid> 
 </Page>

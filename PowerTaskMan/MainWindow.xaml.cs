@@ -30,11 +30,6 @@ namespace power_task_man
             this.InitializeComponent();
         }
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void NavigationView_SelectionChanged(NavigationView sender, NavigationViewSelectionChangedEventArgs args)
         {
             if (args.SelectedItem is NavigationViewItem selectedItem)
