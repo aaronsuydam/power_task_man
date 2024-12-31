@@ -39,6 +39,32 @@ namespace PowerTaskMan.Controls
             typeof(GraphControlWin2D),
             new PropertyMetadata(false));
 
+        public static readonly DependencyProperty DataLabelProperty = DependencyProperty.Register(
+            nameof(DataLabel),
+            typeof(string),
+            typeof(GraphControl),
+            new PropertyMetadata(null, OnDataLabelChanged));
+
+   
+        public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
+            nameof(Title),
+            typeof(string),
+            typeof(GraphControl),
+            new PropertyMetadata(null, (DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+            {
+                var gc = d as GraphControl;
+                gc.Title = e.NewValue?.ToString() ?? "";
+            }));
+
+        public string Title { get; set; } = "Graph";
+
+        public string DataLabel
+        {
+            get => (string)GetValue(DataLabelProperty);
+            set => SetValue(DataLabelProperty, value);
+        }
+
+
         public Color AxesColor
         {
             get { return (Color)GetValue(AxesColorProperty); }
@@ -106,6 +132,20 @@ namespace PowerTaskMan.Controls
             control.refresh_request_cache.Add(true);
         }
 
+        private static void OnDataLabelChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var gc = d as GraphControlWin2D;
+            gc.SetDataLabelText(e.NewValue?.ToString() ?? "");
+        }
+
+        private void SetDataLabelText(string v)
+        {
+            if (DataLabelTextBlock != null)
+            {
+                DataLabelTextBlock.Text = v;
+            }
+        }
+
         public void Invalidate()
         {
             Canvas.Invalidate();
@@ -147,9 +187,9 @@ namespace PowerTaskMan.Controls
 
                 for (int i = 0; i < data.Count - 1; i++)
                 {
-                    var x1 = origin_x + data[i].X;
+                    var x1 = origin_x + (data[i].X * 2);
                     var y1 = origin_y - data[i].Y;
-                    var x2 = origin_x + data[i + 1].X;
+                    var x2 = origin_x + (data[i + 1].X * 2);
                     var y2 = origin_y - data[i + 1].Y;
                     session.DrawLine(x1, y1, x2, y2, Colors.Black, 2);
                 }

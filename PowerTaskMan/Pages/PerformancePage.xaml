@@ -39,12 +39,11 @@
             BorderThickness="1"
             CornerRadius="5">
 
-            <controls:GraphControl
+            <controls:GraphControlWin2D
                 Title="Memory Use (%)"
                 DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-                GraphSeries="{x:Bind viewModel.MemoryUseChartSeries}"
-                XAxes="{x:Bind MemoryChartXAxes}"
-                YAxes="{x:Bind MemoryChartYAxes}" />
+                DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+                UseIndexBasedGraphing="True" />
 
         </Border>
 

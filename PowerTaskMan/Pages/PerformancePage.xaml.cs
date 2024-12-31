@@ -57,6 +57,7 @@ namespace power_task_man.Pages
             this.viewModel.BeginMonitoring(this.DispatcherQueue);
         }
 
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.viewModel.BeginMonitoring(this.DispatcherQueue);

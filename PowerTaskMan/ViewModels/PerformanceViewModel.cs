@@ -1,20 +1,19 @@
-﻿using LiveChartsCore.SkiaSharpView.Painting;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
-using Microsoft.UI.Xaml;
+using LiveChartsCore.SkiaSharpView.Painting;
+using Microsoft.UI.Dispatching;
 using power_task_man.Services;
+using PowerTaskMan.Common;
 using PowerTaskMan.Services;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiveChartsCore;
 using System.Collections.ObjectModel;
-using Microsoft.UI.Dispatching;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PowerTaskMan.ViewModels
 {
@@ -53,7 +52,10 @@ namespace PowerTaskMan.ViewModels
 
         public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
 
-        public ObservableCollection<ISeries> MemoryUseChartSeries { get; set; } = new();
+        [ObservableProperty]
+        List<ICoordinatePair> memoryUseChartSeries = new List<ICoordinatePair>(
+            Enumerable.Range(0, 60).Select(_ => new CoordinatePair { X = 0, Y = 0 })
+        );
 
         public ObservableCollection<ObservableCollection<ISeries>> UtilizationChartSeriesCollection { get; set; }
 
@@ -83,7 +85,7 @@ namespace PowerTaskMan.ViewModels
                     {
                         UpdateMemoryChartData();
                     });
-                    Task.Delay(500).Wait();
+                    Task.Delay(50).Wait();
                 }
             });
 
@@ -147,32 +149,11 @@ namespace PowerTaskMan.ViewModels
 
         void UpdateMemoryChartData()
         {
-            if (MemoryUseChartSeries.Count == 0)
-            {
-                MemoryUseChartSeries.Add(
-                    new LineSeries<int>
-                    {
-                        Values = new int[60],
-                        Stroke = new SolidColorPaint(SKColor.Parse("FFAD1EFE")) { StrokeThickness = 2 },
-                        Fill = new SolidColorPaint(SKColor.Parse("80AD1EFE")),
-                        GeometryFill = new SolidColorPaint(SKColor.Parse("FFAD1EFE")),
-                        GeometryStroke = new SolidColorPaint(SKColor.Parse("FFAD1EFE")),
-                        GeometrySize = 5,
-                        LineSmoothness = 0.1
-                    }
-                );
-                UsedMemoryMBString = UsedMemoryMB.ToString() + " MB";
-
-            }
-            else
-            {
-                var values = MemoryUseChartSeries[0].Values.Cast<int>().ToList();
-                values.RemoveAt(0);
-                values.Add(UsedMemoryPercent);
-                MemoryUseChartSeries[0].Values = values;
-                UsedMemoryMBString = UsedMemoryMB.ToString() + " MB";
-            }
-
+            var values = MemoryUseChartSeries.Cast<CoordinatePair>().ToList();
+            values.RemoveAt(0);
+            values.Add(new CoordinatePair { X = 0, Y = UsedMemoryPercent });
+            MemoryUseChartSeries = new List<ICoordinatePair>(values);
+            UsedMemoryMBString = UsedMemoryMB.ToString() + " MB";
         }
 
         void UpdateCPUFrequencyChart(int new_clock_mhz)
@@ -203,31 +184,7 @@ namespace PowerTaskMan.ViewModels
 
         void UpdateCPUUtilizationChart()
         {
-            if (UtilizationChartSeriesCollection.Count == 0)
-            {
-                UtilizationChartSeriesCollection.Add(
-                    new ObservableCollection<ISeries>()
-                    {
-                        new LineSeries<int>
-                        {
-                            Values = new int[60],
-                            Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
-                            Fill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                            GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                            GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
-                            GeometrySize = 5,
-                            LineSmoothness = 0.1
-                        }
-                    }
-                );
-            }
-            else
-            {
-                var values = UtilizationChartSeriesCollection[0][0].Values.Cast<int>().ToList();
-                values.RemoveAt(0);
-                values.Add(UsedMemoryPercent);
-                UtilizationChartSeriesCollection[0][0].Values = values;
-            }
+            
         }
     }
 }
