@@ -43,6 +43,8 @@
                 Title="Memory Use (%)"
                 DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
                 DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+                DataPointColor="{StaticResource ColorMagentaRaw}"
+                LineColor="{StaticResource ColorMagentaRaw}"
                 UseIndexBasedGraphing="True" />
 
         </Border>

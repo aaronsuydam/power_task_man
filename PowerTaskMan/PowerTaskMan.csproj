@@ -14,6 +14,10 @@
 
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\Colors.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\Colors.xaml" />
     <None Remove="Controls\GraphControlResource.xaml" />
     <None Remove="Controls\GraphControlWin2D.xaml" />
   </ItemGroup>
@@ -46,6 +50,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Assets\Colors.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Controls\GraphControlWin2D.xaml">

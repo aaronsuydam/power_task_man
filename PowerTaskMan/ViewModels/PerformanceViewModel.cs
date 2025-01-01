@@ -85,7 +85,7 @@ namespace PowerTaskMan.ViewModels
                     {
                         UpdateMemoryChartData();
                     });
-                    Task.Delay(50).Wait();
+                    Task.Delay(500).Wait();
                 }
             });
 

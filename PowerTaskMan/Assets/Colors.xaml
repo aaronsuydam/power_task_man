@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Define brushes for the colors -->
+    <SolidColorBrush x:Key="ColorRed" Color="#FE462D"/>
+    <SolidColorBrush x:Key="ColorRedOrange" Color="#FEBA28"/>
+    <SolidColorBrush x:Key="ColorOrange" Color="#FFD039"/>
+    <SolidColorBrush x:Key="ColorYellow" Color="#E7FE33"/>
+    <SolidColorBrush x:Key="ColorGreen" Color="#2DFF4E"/>
+    <SolidColorBrush x:Key="ColorSkyBlue" Color="#58F2FC"/>
+    <SolidColorBrush x:Key="ColorBlue" Color="#35A6FB"/>
+    <SolidColorBrush x:Key="ColorMagenta" Color="#E52FF4"/>
+    <SolidColorBrush x:Key="ColorPurple" Color="#A525F5"/>
+    
+    <!-- Define raw colors from the brushes -->
+    <Color x:Key="ColorRedRaw">#FE462D</Color>
+    <Color x:Key="ColorRedOrangeRaw">#FEBA28</Color>
+    <Color x:Key="ColorOrangeRaw">#FFD039</Color>
+    <Color x:Key="ColorYellowRaw">#E7FE33</Color>
+    <Color x:Key="ColorGreenRaw">#2DFF4E</Color>
+    <Color x:Key="ColorSkyBlueRaw">#58F2FC</Color>
+    <Color x:Key="ColorBlueRaw">#35A6FB</Color>
+    <Color x:Key="ColorMagentaRaw">#E52FF4</Color>
+    <Color x:Key="ColorPurpleRaw">#A525F5</Color>
+    
+
+
+
+</ResourceDictionary>
