@@ -50,7 +50,10 @@ namespace PowerTaskMan.ViewModels
         private CancellationTokenSource memory_cts;
 
 
-        public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
+        [ObservableProperty]
+        List<ICoordinatePair> cpuFrequencyChartSeries = new List<ICoordinatePair>(
+            Enumerable.Range(0, 120).Select(_ => new CoordinatePair { X = 0, Y = 0 })
+        );
 
         [ObservableProperty]
         List<ICoordinatePair> memoryUseChartSeries = new List<ICoordinatePair>(
@@ -158,28 +161,11 @@ namespace PowerTaskMan.ViewModels
 
         void UpdateCPUFrequencyChart(int new_clock_mhz)
         {
-            if (FrequencyHistoryChartSeries.Count == 0)
-            {
-                FrequencyHistoryChartSeries.Add(
-                    new LineSeries<int>
-                    {
-                        Values = new int[60],
-                        Stroke = new SolidColorPaint(SKColor.Parse("2196f3")) { StrokeThickness = 2 },
-                        Fill = null,
-                        GeometryFill = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometryStroke = new SolidColorPaint(SKColor.Parse("2196f3")),
-                        GeometrySize = 5,
-                        LineSmoothness = 0.1
-                    }
-                );
-            }
-            else
-            {
-                var values = FrequencyHistoryChartSeries[0].Values.Cast<int>().ToList();
-                values.RemoveAt(0);
-                values.Add(new_clock_mhz);
-                FrequencyHistoryChartSeries[0].Values = values;
-            }
+            var values = CpuFrequencyChartSeries.Cast<CoordinatePair>().ToList();
+            values.RemoveAt(0);
+            values.Add(new CoordinatePair { X = 0, Y = new_clock_mhz });
+            CpuFrequencyChartSeries = new List<ICoordinatePair>(values);
+            CurrentFrequency = new_clock_mhz.ToString() + " GHz";
         }
 
         void UpdateCPUUtilizationChart()

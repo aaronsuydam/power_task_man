@@ -7,6 +7,7 @@ using Microsoft.UI.Xaml;
 using System.Threading.Tasks;
 using PowerTaskMan.Common;
 using System;
+using System.Linq;
 
 namespace PowerTaskMan.Controls
 {
@@ -67,6 +68,8 @@ namespace PowerTaskMan.Controls
 
         // Member Variables
         private IList<bool> refresh_request_cache = new List<bool>();
+
+        private IList<ICoordinatePair> scaled_data_points;
 
         // Constructor
         public GraphControlWin2D()
@@ -201,39 +204,109 @@ namespace PowerTaskMan.Controls
             float origin_x = 0 + margin;
             float origin_y = 0 - margin + height;
 
-            // Draw the data points and lines
+            
+            // If we are using index_based graphing, we need to replace those X indices
+            var new_data = new List<ICoordinatePair>();
+
             if (UseIndexBasedGraphing)
             {
-                var data = new List<ICoordinatePair>();
-                for (int i = 0; i < DataPoints.Count; i++)
+                var counter = 0;
+                foreach (var point in DataPoints)
                 {
-                    data.Add(new CoordinatePair { X = i, Y = DataPoints[i].Y });
-                }
-
-                for (int i = 0; i < data.Count - 1; i++)
-                {
-                    var x1 = origin_x + (data[i].X * 2);
-                    var y1 = origin_y - data[i].Y;
-                    var x2 = origin_x + (data[i + 1].X * 2);
-                    var y2 = origin_y - data[i + 1].Y;
-                    session.DrawLine(x1, y1, x2, y2, LineColor, 2);
-                    session.FillCircle(x1, y1, 3, DataPointColor);
-                    session.FillCircle(x2, y2, 3, DataPointColor);
+                    var new_coord_pair = new CoordinatePair { X = counter, Y = point.Y };
+                    new_data.Add(new_coord_pair);
+                    counter++;
                 }
             }
             else
             {
-                for (int i = 0; i < DataPoints.Count - 1; i++)
-                {
-                    var x1 = origin_x + DataPoints[i].X;
-                    var y1 = origin_y - DataPoints[i].Y;
-                    var x2 = origin_x + DataPoints[i + 1].X;
-                    var y2 = origin_y - DataPoints[i + 1].Y;
-                    session.DrawLine(x1, y1, x2, y2, LineColor, 2);
-                    session.FillCircle(x1, y1, 3, DataPointColor);
-                    session.FillCircle(x2, y2, 3, DataPointColor);
-                }
+                new_data = DataPoints.ToList();
             }
+
+            // What is the max and min values we are going to display?
+            CoordinatePair max = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
+            CoordinatePair min = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
+
+            foreach (var point in new_data)
+            {
+                if (point.X > max.X)
+                    max.X = point.X;
+                if (point.Y > max.Y)
+                    max.Y = point.Y;
+                if (point.X < min.X)
+                    min.X = point.X;
+                if (point.Y < min.Y)
+                    min.Y = point.Y;
+            }
+
+            // If the height and or width of the canvas is more than an order of magnitude different from the data, define the scale
+            // factor
+            float x_scale = 1;
+            float y_scale = 1;
+
+            float effective_width = width - (2 * margin); // Accounts for the margin
+            float effective_height = height - (2 * margin); // Accounts for the margin
+
+            if (max.X - min.X != effective_width)
+            {
+                x_scale = effective_width / (max.X - min.X);
+            }
+
+            if (max.Y - min.Y > effective_height)
+            {
+                y_scale = effective_height / (max.Y - min.Y);
+            }
+
+
+
+            // if the scale factor for either is not one, we need a new set of data points to graph,
+            // and we need to subtract the minimum values from all points in the data range
+            if (x_scale != 1 || y_scale != 1)
+            {
+                scaled_data_points = ScaleAndTranslateCoordinateData(new_data, x_scale, y_scale, min.X, min.Y);
+            }
+            else
+            {
+                scaled_data_points = DataPoints;
+            }
+
+            for (int i = 0; i < scaled_data_points.Count - 1; i++)
+            {
+                var x1 = origin_x + scaled_data_points[i].X;
+                var y1 = origin_y - scaled_data_points[i].Y;
+                var x2 = origin_x + scaled_data_points[i + 1].X;
+                var y2 = origin_y - scaled_data_points[i + 1].Y;
+                session.DrawLine(x1, y1, x2, y2, LineColor, 2);
+                session.FillCircle(x1, y1, 3, DataPointColor);
+                session.FillCircle(x2, y2, 3, DataPointColor);
+            }
+            
+        }
+
+        private List<ICoordinatePair> ScaleCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale)
+        {
+            var new_data = new List<ICoordinatePair>();
+            foreach (var point in data)
+            {
+                var newX = point.X * x_scale;
+                var newY = point.Y* y_scale;
+                var new_coord_pair = new CoordinatePair { X = newX, Y = newY };
+                new_data.Add(new_coord_pair);
+            }
+            return new_data;
+        }
+
+        private List<ICoordinatePair> ScaleAndTranslateCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale, float min_x, float min_y)
+        {
+            var new_data = new List<ICoordinatePair>();
+            foreach (var point in data)
+            {
+                var newX = (point.X - min_x) * x_scale;
+                var newY = (point.Y - min_y) * y_scale;
+                var new_coord_pair = new CoordinatePair { X = newX, Y = newY };
+                new_data.Add(new_coord_pair);
+            }
+            return new_data;
         }
     }
 }

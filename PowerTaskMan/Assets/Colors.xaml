@@ -24,6 +24,7 @@
     <Color x:Key="ColorBlueRaw">#35A6FB</Color>
     <Color x:Key="ColorMagentaRaw">#E52FF4</Color>
     <Color x:Key="ColorPurpleRaw">#A525F5</Color>
+    <Color x:Key="ColorGrayRaw">#4D4D4D</Color>
     
 
 

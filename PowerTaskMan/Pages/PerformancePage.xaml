@@ -38,24 +38,15 @@
             BorderBrush="DarkGray"
             BorderThickness="1"
             CornerRadius="5">
-            <StackPanel>
-                <controls:GraphControlWin2D
+
+                <!--<controls:GraphControlWin2D
                     Title="Memory Use (%)"
                     DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
                     DataPointColor="{StaticResource ColorMagentaRaw}"
                     DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
-                    LineColor="{StaticResource ColorMagentaRaw}"
-                    UseIndexBasedGraphing="True" />
+                    LineColor="{StaticResource ColorGrayRaw}"
+                    UseIndexBasedGraphing="True" />-->
 
-                <controls:GraphControlWin2D
-                    Title="Memory Use (%) (Blue)"
-                    DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-                    DataPointColor="{StaticResource ColorBlueRaw}"
-                    DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
-                    LineColor="{StaticResource ColorBlueRaw}"
-                    UseIndexBasedGraphing="True" />
-
-            </StackPanel>
 
         </Border>
 
@@ -67,13 +58,13 @@
             BorderThickness="1"
             CornerRadius="5">
 
-            <controls:GraphControl
+            <controls:GraphControlWin2D
                 Title="CPU Frequency (X.XXX GHz)"
                 DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
-                EasingFunction="{x:Null}"
-                GraphSeries="{x:Bind viewModel.FrequencyHistoryChartSeries}"
-                XAxes="{x:Bind FrequencyChartXAxes}"
-                YAxes="{x:Bind FrequencyChartYAxes}" />
+                DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
+                DataPointColor="{StaticResource ColorBlueRaw}"
+                LineColor="{StaticResource ColorGrayRaw}"
+                UseIndexBasedGraphing="True"/>
         </Border>
 
         <Border
