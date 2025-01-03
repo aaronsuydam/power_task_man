@@ -38,14 +38,24 @@
             BorderBrush="DarkGray"
             BorderThickness="1"
             CornerRadius="5">
+            <StackPanel>
+                <controls:GraphControlWin2D
+                    Title="Memory Use (%)"
+                    DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
+                    DataPointColor="{StaticResource ColorMagentaRaw}"
+                    DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+                    LineColor="{StaticResource ColorMagentaRaw}"
+                    UseIndexBasedGraphing="True" />
 
-            <controls:GraphControlWin2D
-                Title="Memory Use (%)"
-                DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-                DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
-                DataPointColor="{StaticResource ColorMagentaRaw}"
-                LineColor="{StaticResource ColorMagentaRaw}"
-                UseIndexBasedGraphing="True" />
+                <controls:GraphControlWin2D
+                    Title="Memory Use (%) (Blue)"
+                    DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
+                    DataPointColor="{StaticResource ColorBlueRaw}"
+                    DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+                    LineColor="{StaticResource ColorBlueRaw}"
+                    UseIndexBasedGraphing="True" />
+
+            </StackPanel>
 
         </Border>
 

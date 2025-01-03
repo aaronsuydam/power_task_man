@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Microsoft.UI.Xaml;
 using System.Threading.Tasks;
 using PowerTaskMan.Common;
+using System;
 
 namespace PowerTaskMan.Controls
 {
@@ -34,7 +35,7 @@ namespace PowerTaskMan.Controls
             "DataPointColor",
             typeof(Color),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(Colors.Black, OnDataPointColorPropertyChanged));
+            new PropertyMetadata(Colors.Black));
 
         public static readonly DependencyProperty DataPointsProperty = DependencyProperty.Register(
             "DataPoints",
@@ -157,13 +158,6 @@ namespace PowerTaskMan.Controls
             gc.SetDataLabelText(e.NewValue?.ToString() ?? "");
         }
 
-        private static void OnDataPointColorPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
-        {
-            var control = (GraphControlWin2D)dobj;
-            control.DataPointColor = (Color)e.NewValue;
-            control.refresh_request_cache.Add(true);
-        }
-
         private static void OnDataPointsPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
@@ -174,7 +168,7 @@ namespace PowerTaskMan.Controls
         private static void OnLineColorPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
-            control.LineColor = (Color)e.NewValue;
+            //control.LineColor = (Color)e.NewValue;
             control.refresh_request_cache.Add(true);
         }
 
