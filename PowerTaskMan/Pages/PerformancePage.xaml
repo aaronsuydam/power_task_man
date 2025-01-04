@@ -32,40 +32,28 @@
             FontSize="20"
             Text="Performance" />
 
-        <Border
+        <controls:GraphControlWin2D
             Grid.Row="1"
             Grid.Column="1"
-            BorderBrush="DarkGray"
-            BorderThickness="1"
-            CornerRadius="5">
-
-                <!--<controls:GraphControlWin2D
-                    Title="Memory Use (%)"
-                    DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-                    DataPointColor="{StaticResource ColorMagentaRaw}"
-                    DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
-                    LineColor="{StaticResource ColorGrayRaw}"
-                    UseIndexBasedGraphing="True" />-->
+            Title="Memory Use (%)"
+            DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
+            DataPointColor="{StaticResource ColorMagentaRaw}"
+            DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+            LineColor="{StaticResource ColorMagentaRaw}"
+            UseIndexBasedGraphing="True" />
 
 
-        </Border>
 
-        <Border
+
+
+
+        <controls:GraphControlWin2D
             Grid.Row="1"
-            Grid.Column="0"
-            Height="250"
-            BorderBrush="DarkGray"
-            BorderThickness="1"
-            CornerRadius="5">
+            DataPointColor="{StaticResource ColorBlueRaw}"
+            DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
+            LineColor="{StaticResource ColorBlueRaw}"
+            UseIndexBasedGraphing="True" />
 
-            <controls:GraphControlWin2D
-                Title="CPU Frequency (X.XXX GHz)"
-                DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
-                DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
-                DataPointColor="{StaticResource ColorBlueRaw}"
-                LineColor="{StaticResource ColorGrayRaw}"
-                UseIndexBasedGraphing="True"/>
-        </Border>
 
         <Border
             Grid.Row="2"

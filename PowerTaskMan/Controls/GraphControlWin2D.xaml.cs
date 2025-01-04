@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using PowerTaskMan.Common;
 using System;
 using System.Linq;
+using Windows.UI.ViewManagement;
+using Windows.Foundation;
+using Microsoft.UI.Xaml.Media;
+using System.Diagnostics;
 
 namespace PowerTaskMan.Controls
 {
@@ -27,10 +31,10 @@ namespace PowerTaskMan.Controls
             new PropertyMetadata(10.0f, OnAxisMarginPropertyChanged));
 
         public static readonly DependencyProperty DataLabelProperty = DependencyProperty.Register(
-            nameof(DataLabel),
+            "DataLabel",
             typeof(string),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(null, OnDataLabelChanged));
+            new PropertyMetadata(String.Empty, OnDataLabelChanged));
 
         public static readonly DependencyProperty DataPointColorProperty = DependencyProperty.Register(
             "DataPointColor",
@@ -58,6 +62,10 @@ namespace PowerTaskMan.Controls
             {
                 var gc = d as GraphControlWin2D;
                 gc.Title = e.NewValue?.ToString() ?? "";
+                if(gc.ChartTitleTextBlock != null)
+                {
+                    gc.ChartTitleTextBlock.Text = gc.Title;
+                }
             }));
 
         public static readonly DependencyProperty UseIndexBasedGraphingProperty = DependencyProperty.Register(
@@ -71,10 +79,17 @@ namespace PowerTaskMan.Controls
 
         private IList<ICoordinatePair> scaled_data_points;
 
+        private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+        private SolidColorBrush _foreground_brush;
+
         // Constructor
         public GraphControlWin2D()
         {
             this.InitializeComponent();
+            GraphControlBorderXamlRef.Translation = new System.Numerics.Vector3(0, 0, 16);
+            GraphControlBorderXamlRef.Shadow = new ThemeShadow();
+
+            GraphControlBorderXamlRef.Background = _background_brush;
 
             Task.Run(() =>
             {
@@ -127,7 +142,11 @@ namespace PowerTaskMan.Controls
             set { SetValue(LineColorProperty, value); }
         }
 
-        public string Title { get; set; } = "Graph";
+        public string Title
+        {
+            get => (string)GetValue(TitleProperty);
+            set => SetValue(TitleProperty, value);
+        }
 
         public bool UseIndexBasedGraphing
         {
@@ -183,12 +202,16 @@ namespace PowerTaskMan.Controls
             }
         }
 
+
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var session = args.DrawingSession;
+            Debug.WriteLine("Background Color:" + _background_brush.Color.ToString());
 
             // Clear the canvas
-            session.Clear(Colors.White);
+            var backgroundColor = _background_brush.Color;
+            var opaqueColor = Color.FromArgb(190, 251, 251, 251); // Remove the alpha (255 = fully opaque)
+            session.Clear(opaqueColor);
 
             if (DataPoints == null || DataPoints.Count < 2)
                 return;
@@ -201,8 +224,9 @@ namespace PowerTaskMan.Controls
             session.DrawLine(margin, height - margin, width - margin, height - margin, AxesColor, 2);
 
             // Calculate the graph's origin
-            float origin_x = 0 + margin;
-            float origin_y = 0 - margin + height;
+            float data_margin = AxisMargin;
+            float origin_x = 0 + margin + data_margin;
+            float origin_y = 0 - margin + height - data_margin;
 
             
             // If we are using index_based graphing, we need to replace those X indices
@@ -244,8 +268,8 @@ namespace PowerTaskMan.Controls
             float x_scale = 1;
             float y_scale = 1;
 
-            float effective_width = width - (2 * margin); // Accounts for the margin
-            float effective_height = height - (2 * margin); // Accounts for the margin
+            float effective_width = width - (2 * (margin + data_margin)); // Accounts for the margin
+            float effective_height = height - (2 * (margin + data_margin)); // Accounts for the margin
 
             if (max.X - min.X != effective_width)
             {
