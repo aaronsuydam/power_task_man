@@ -48,6 +48,12 @@ namespace PowerTaskMan.Controls
             typeof(GraphControlWin2D),
             new PropertyMetadata(new List<ICoordinatePair>(), OnDataPointsPropertyChanged));
 
+        public static readonly DependencyProperty GridLineColorProperty = DependencyProperty.Register(
+            "GridLineColor",
+            typeof(Color),
+            typeof(GraphControlWin2D),
+            new PropertyMetadata(Colors.LightGray));
+
         public static readonly DependencyProperty LineColorProperty = DependencyProperty.Register(
             "LineColor",
             typeof(Color),
@@ -136,6 +142,12 @@ namespace PowerTaskMan.Controls
             set { SetValue(DataPointsProperty, value); }
         }
 
+        public Color GridLineColor
+        {
+            get { return (Color)GetValue(GridLineColorProperty); }
+            set { SetValue(GridLineColorProperty, value); }
+        }
+
         public Color LineColor
         {
             get { return (Color)GetValue(LineColorProperty); }
@@ -206,12 +218,7 @@ namespace PowerTaskMan.Controls
         void Canvas_Draw(CanvasControl sender, CanvasDrawEventArgs args)
         {
             var session = args.DrawingSession;
-            Debug.WriteLine("Background Color:" + _background_brush.Color.ToString());
-
-            // Clear the canvas
-            var backgroundColor = _background_brush.Color;
-            var opaqueColor = Color.FromArgb(190, 251, 251, 251); // Remove the alpha (255 = fully opaque)
-            session.Clear(opaqueColor);
+            ClearCanvas(sender, args);
 
             if (DataPoints == null || DataPoints.Count < 2)
                 return;
@@ -220,15 +227,12 @@ namespace PowerTaskMan.Controls
             var width = (float)sender.ActualWidth;
             var height = (float)sender.ActualHeight;
             var margin = AxisMargin;
-            session.DrawLine(margin, margin, margin, height - margin, AxesColor, 2);
-            session.DrawLine(margin, height - margin, width - margin, height - margin, AxesColor, 2);
 
             // Calculate the graph's origin
             float data_margin = AxisMargin;
             float origin_x = 0 + margin + data_margin;
             float origin_y = 0 - margin + height - data_margin;
 
-            
             // If we are using index_based graphing, we need to replace those X indices
             var new_data = new List<ICoordinatePair>();
 
@@ -276,7 +280,7 @@ namespace PowerTaskMan.Controls
                 x_scale = effective_width / (max.X - min.X);
             }
 
-            if (max.Y - min.Y > effective_height)
+            if (max.Y - min.Y != effective_height)
             {
                 y_scale = effective_height / (max.Y - min.Y);
             }
@@ -293,6 +297,14 @@ namespace PowerTaskMan.Controls
             {
                 scaled_data_points = DataPoints;
             }
+
+          
+            DrawAxesAndGridLines(sender, args, width, height, margin);
+
+
+
+            
+            
 
             for (int i = 0; i < scaled_data_points.Count - 1; i++)
             {
@@ -331,6 +343,41 @@ namespace PowerTaskMan.Controls
                 new_data.Add(new_coord_pair);
             }
             return new_data;
+        }
+
+        private void ClearCanvas(CanvasControl sender, CanvasDrawEventArgs args)
+        {
+            var session = args.DrawingSession;
+            var backgroundColor = _background_brush.Color;
+            var opaqueColor = Color.FromArgb(190, 251, 251, 251); // Remove the alpha (255 = fully opaque)
+            session.Clear(opaqueColor);
+        }
+
+        private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args, float width, float height, float margin)
+        {
+            CoordinatePair x_axis_start = new CoordinatePair { X = margin, Y = height - margin };
+            CoordinatePair x_axis_end = new CoordinatePair { X = width - margin, Y = height - margin };
+            CoordinatePair y_axis_start = new CoordinatePair { X = margin, Y = margin };
+            CoordinatePair y_axis_end = new CoordinatePair { X = margin, Y = height - margin };
+
+            args.DrawingSession.DrawLine(x_axis_start.X, x_axis_start.Y, x_axis_end.X, x_axis_end.Y, AxesColor, 2);
+            args.DrawingSession.DrawLine(y_axis_start.X, y_axis_start.Y, y_axis_end.X, y_axis_end.Y, AxesColor, 2);
+
+            float width_for_gl = width - (1 * margin);
+            float height_for_gl = height - (1 * margin);
+            float spacing = 40;
+
+            // Draw vertical gridlines.
+            for (float i = margin + spacing; i < width_for_gl; i += spacing)
+            {
+                args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridLineColor);
+            }
+
+            // Draw horizontal gridlines.
+            for (float i = margin + 1; i < height_for_gl; i += spacing)
+            {
+                args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridLineColor);
+            }
         }
     }
 }
