@@ -57,6 +57,7 @@
                 x:Name="DataLabelTextBlock"
                 Grid.Row="1"
                 Grid.Column="1"
+                Padding="5"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 HorizontalTextAlignment="Center"

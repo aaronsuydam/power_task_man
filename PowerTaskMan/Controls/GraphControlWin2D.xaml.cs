@@ -255,17 +255,15 @@ namespace PowerTaskMan.Controls
             CoordinatePair max = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
             CoordinatePair min = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
 
-            foreach (var point in new_data)
-            {
-                if (point.X > max.X)
-                    max.X = point.X;
-                if (point.Y > max.Y)
-                    max.Y = point.Y;
-                if (point.X < min.X)
-                    min.X = point.X;
-                if (point.Y < min.Y)
-                    min.Y = point.Y;
-            }
+            max.X = new_data.MaxBy(new_data => new_data.X).X;
+            max.Y = new_data.MaxBy(new_data => new_data.Y).Y;
+
+            min.X = new_data.MinBy(new_data => new_data.X).X;
+            min.Y = new_data.MinBy(new_data => new_data.Y).Y;
+
+            // Calculate intervals for the gridlines
+            float xRange = max.X - min.X;
+            float yRange = max.Y - min.Y;
 
             // If the height and or width of the canvas is more than an order of magnitude different from the data, define the scale
             // factor
@@ -277,15 +275,29 @@ namespace PowerTaskMan.Controls
 
             if (max.X - min.X != effective_width)
             {
-                x_scale = effective_width / (max.X - min.X);
+                if(xRange != 0)
+                    x_scale = effective_width / (max.X - min.X);
+                else
+                    x_scale = 1;
             }
 
             if (max.Y - min.Y != effective_height)
             {
-                y_scale = effective_height / (max.Y - min.Y);
+                if (yRange != 0)
+                    y_scale = effective_height / (max.Y - min.Y);
+                else
+                    y_scale = 1;
             }
 
+       
+            float x_gridline_interval_raw = xRange / 10;
+            float y_gridline_interval_raw = yRange / 10;
 
+            float x_interval = (float)DetermineAxisGridlineInterval(x_gridline_interval_raw);
+            float y_interval = (float)DetermineAxisGridlineInterval(y_gridline_interval_raw);
+
+
+            DrawAxesAndGridLines(sender, args, width, height, x_interval, y_interval, margin);
 
             // if the scale factor for either is not one, we need a new set of data points to graph,
             // and we need to subtract the minimum values from all points in the data range
@@ -298,8 +310,7 @@ namespace PowerTaskMan.Controls
                 scaled_data_points = DataPoints;
             }
 
-          
-            DrawAxesAndGridLines(sender, args, width, height, margin);
+            
 
 
 
@@ -353,7 +364,10 @@ namespace PowerTaskMan.Controls
             session.Clear(opaqueColor);
         }
 
-        private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args, float width, float height, float margin)
+        private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args,
+                                        float width, float height,
+                                        float xInterval, float yInterval, 
+                                        float margin)
         {
             CoordinatePair x_axis_start = new CoordinatePair { X = margin, Y = height - margin };
             CoordinatePair x_axis_end = new CoordinatePair { X = width - margin, Y = height - margin };
@@ -365,19 +379,38 @@ namespace PowerTaskMan.Controls
 
             float width_for_gl = width - (1 * margin);
             float height_for_gl = height - (1 * margin);
-            float spacing = 40;
+        
 
             // Draw vertical gridlines.
-            for (float i = margin + spacing; i < width_for_gl; i += spacing)
+            for (float i = margin + xInterval; i < width_for_gl; i += xInterval)
             {
                 args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridLineColor);
             }
 
             // Draw horizontal gridlines.
-            for (float i = margin + 1; i < height_for_gl; i += spacing)
+            for (float i = margin + 1; i < height_for_gl; i += yInterval)
             {
                 args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridLineColor);
             }
+        }
+
+        double DetermineAxisGridlineInterval(double rawInterval)
+        {
+            if(rawInterval == 0 || rawInterval < 10)
+            {
+                return 20;
+            }
+            // 1. Calculate power of 10
+            double magnitude = Math.Pow(10, Math.Floor(Math.Log10(rawInterval)));
+
+            // 2. Get the fractional part relative to the magnitude
+            double fraction = rawInterval / magnitude;
+
+            // 3. Choose a "nice" interval based on the fractional part
+            if (fraction <= 1) return magnitude;
+            if (fraction <= 2) return 2 * magnitude;
+            if (fraction <= 5) return 5 * magnitude;
+            return 10 * magnitude;
         }
     }
 }
