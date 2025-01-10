@@ -97,6 +97,8 @@ namespace PowerTaskMan.Controls
         private IList<ICoordinatePair> _dataPoints;
         private IList<ICoordinatePair> scaled_data_points;
 
+        private bool notinit = true;
+
         private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
         private SolidColorBrush _foreground_brush;
 
@@ -227,6 +229,7 @@ namespace PowerTaskMan.Controls
             control.min_y = originalData.MinBy(new_data => new_data.Y).Y;
             control.max_x = originalData.MaxBy(new_data => new_data.X).X;
             control.max_y = originalData.MaxBy(new_data => new_data.Y).Y;
+            control.notinit = false;
             control.refresh_request_cache.Add(true);
         }
 
@@ -259,9 +262,19 @@ namespace PowerTaskMan.Controls
             min.X = DataPoints.MinBy(DataPoints => DataPoints.X).X;
             min.Y = DataPoints.MinBy(DataPoints => DataPoints.Y).Y;
 
-            // Calculate intervals for the gridlines
-            this.xRange = max.X - min.X;
-            this.yRange = max.Y - min.Y;
+            // Calculate intervals for the gridlines, ensuring they are never 0;
+            if(max.X == min.X)
+            {
+                max.X += 1;
+            }
+            if(min.Y == min.Y)
+            {
+                max.Y += 1;
+            }
+
+            xRange = max.X - min.X;
+            yRange = max.Y - min.Y;
+
         }
 
 
@@ -270,7 +283,10 @@ namespace PowerTaskMan.Controls
             var session = args.DrawingSession;
             ClearCanvas(sender, args);
 
-            if (DataPoints == null || DataPoints.Count < 2 || xRange == 0 || yRange == 0)
+            if (DataPoints == null || DataPoints.Count < 2 || this.notinit)
+                return;
+
+            if (xRange == 0 || yRange == 0)
                 return;
 
             // Draw axes
@@ -416,11 +432,7 @@ namespace PowerTaskMan.Controls
         /// <param name="data_range"></param>
         /// <returns></returns>
         float DetermineAxisGridlineInterval(float data_range, float more_or_less_gridlines = 1)
-        {
-            if(data_range == 0 || data_range < 1)
-            {
-                return 1;
-            }
+        { 
             // 1. Calculate power of 10
             double nearest_power_ten = Math.Floor(Math.Log10(data_range));
             double next_lowest_power_ten = nearest_power_ten - 1;
@@ -436,9 +448,18 @@ namespace PowerTaskMan.Controls
             else if (fraction <= 6) interval = (float)Math.Round(fraction);
             else interval = 6.0f;
 
-            // 4. Ensure no more than 15 gridlines
+            // 4. Determine max and min intervals
             float max_interval = data_range / 10.0f; // Maximum allowable interval for 15 gridlines
-            return Math.Max(interval, (float)Math.Round(max_interval));
+            float min_interval = data_range / 3.0f;  // Minimum allowable interval for 3 gridlines
+
+            // Ensure min_interval is never greater than max_interval
+            if (min_interval > max_interval)
+            {
+                min_interval = max_interval;
+            }
+
+            // 5. Clamp the interval between min and max
+            return Math.Clamp(interval, min_interval, max_interval);
         }
 
         /// <summary>
