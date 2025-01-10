@@ -12,6 +12,8 @@ using Windows.UI.ViewManagement;
 using Windows.Foundation;
 using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
+using LiveChartsCore.Measure;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PowerTaskMan.Controls
 {
@@ -34,7 +36,7 @@ namespace PowerTaskMan.Controls
             "DataLabel",
             typeof(string),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(String.Empty, OnDataLabelChanged));
+            new PropertyMetadata(System.String.Empty, OnDataLabelChanged));
 
         public static readonly DependencyProperty DataPointColorProperty = DependencyProperty.Register(
             "DataPointColor",
@@ -83,6 +85,14 @@ namespace PowerTaskMan.Controls
         // Member Variables
         private IList<bool> refresh_request_cache = new List<bool>();
 
+        private float xRange;
+        private float yRange;
+
+        private float min_x;
+        private float min_y;
+        private float max_x;
+        private float max_y;
+
         private IList<ICoordinatePair> scaled_data_points;
 
         private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
@@ -105,7 +115,11 @@ namespace PowerTaskMan.Controls
                     if (refresh_request_cache.Count > 0)
                     {
                         refresh_request_cache.Clear();
-                        Canvas.Invalidate();
+                        DispatcherQueue.TryEnqueue(() =>
+                        {
+                                _determine_data_range(); // Must be called before Canvas.Invalidate() to ensure the range has been updated
+                                Canvas.Invalidate();
+                        });
                     }
                 }
             });
@@ -195,7 +209,27 @@ namespace PowerTaskMan.Controls
         private static void OnDataPointsPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
-            control.DataPoints = (IList<ICoordinatePair>)e.NewValue;
+            IList<ICoordinatePair> new_data = (IList<ICoordinatePair>)e.NewValue; // this doesn't create a copy. dang. 
+            new_data.Clear();
+
+            if (control.UseIndexBasedGraphing)
+            {
+                var counter = 0;
+                foreach (var point in (IList<ICoordinatePair>)e.NewValue)
+                {
+                    var new_coord_pair = new CoordinatePair { X = counter, Y = point.Y };
+                    new_data.Add(new_coord_pair);
+                    counter++;
+                }
+
+            }
+            else
+            {
+                new_data = (IList<ICoordinatePair>)e.NewValue;
+            }
+            control.min_x = new_data.MinBy(new_data => new_data.X).X;
+            control.min_y = new_data.MinBy(new_data => new_data.Y).Y;
+            control.DataPoints = new_data;
             control.refresh_request_cache.Add(true);
         }
 
@@ -212,6 +246,25 @@ namespace PowerTaskMan.Controls
             {
                 DataLabelTextBlock.Text = v;
             }
+        }
+
+        private void _determine_data_range()
+        {
+            if (DataPoints == null || DataPoints.Count < 2)
+                return;
+            // What is the max and min values we are going to display?
+            CoordinatePair max = new CoordinatePair { X = DataPoints.ElementAt(0).X, Y = DataPoints.ElementAt(0).Y };
+            CoordinatePair min = new CoordinatePair { X = DataPoints.ElementAt(0).X, Y = DataPoints.ElementAt(0).Y };
+
+            max.X = DataPoints.MaxBy(DataPoints => DataPoints.X).X;
+            max.Y = DataPoints.MaxBy(DataPoints => DataPoints.Y).Y;
+
+            min.X = DataPoints.MinBy(DataPoints => DataPoints.X).X;
+            min.Y = DataPoints.MinBy(DataPoints => DataPoints.Y).Y;
+
+            // Calculate intervals for the gridlines
+            this.xRange = max.X - min.X;
+            this.yRange = max.Y - min.Y;
         }
 
 
@@ -233,89 +286,33 @@ namespace PowerTaskMan.Controls
             float origin_x = 0 + margin + data_margin;
             float origin_y = 0 - margin + height - data_margin;
 
-            // If we are using index_based graphing, we need to replace those X indices
-            var new_data = new List<ICoordinatePair>();
-
-            if (UseIndexBasedGraphing)
-            {
-                var counter = 0;
-                foreach (var point in DataPoints)
-                {
-                    var new_coord_pair = new CoordinatePair { X = counter, Y = point.Y };
-                    new_data.Add(new_coord_pair);
-                    counter++;
-                }
-            }
-            else
-            {
-                new_data = DataPoints.ToList();
-            }
-
-            // What is the max and min values we are going to display?
-            CoordinatePair max = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
-            CoordinatePair min = new CoordinatePair { X = new_data.ElementAt(0).X, Y = new_data.ElementAt(0).Y };
-
-            max.X = new_data.MaxBy(new_data => new_data.X).X;
-            max.Y = new_data.MaxBy(new_data => new_data.Y).Y;
-
-            min.X = new_data.MinBy(new_data => new_data.X).X;
-            min.Y = new_data.MinBy(new_data => new_data.Y).Y;
-
-            // Calculate intervals for the gridlines
-            float xRange = max.X - min.X;
-            float yRange = max.Y - min.Y;
+    
 
             // If the height and or width of the canvas is more than an order of magnitude different from the data, define the scale
             // factor
-            float x_scale = 1;
-            float y_scale = 1;
+            (float x_scale, float y_scale) = DetermineScalingFactor(height, width, margin, data_margin);
 
-            float effective_width = width - (2 * (margin + data_margin)); // Accounts for the margin
-            float effective_height = height - (2 * (margin + data_margin)); // Accounts for the margin
-
-            if (max.X - min.X != effective_width)
-            {
-                if(xRange != 0)
-                    x_scale = effective_width / (max.X - min.X);
-                else
-                    x_scale = 1;
-            }
-
-            if (max.Y - min.Y != effective_height)
-            {
-                if (yRange != 0)
-                    y_scale = effective_height / (max.Y - min.Y);
-                else
-                    y_scale = 1;
-            }
-
-       
-            float x_gridline_interval_raw = xRange / 10;
-            float y_gridline_interval_raw = yRange / 10;
-
-            float x_interval = (float)DetermineAxisGridlineInterval(x_gridline_interval_raw);
-            float y_interval = (float)DetermineAxisGridlineInterval(y_gridline_interval_raw);
+            float x_interval = DetermineAxisGridlineInterval(this.xRange);
+            float y_interval = DetermineAxisGridlineInterval(this.yRange);
 
 
-            DrawAxesAndGridLines(sender, args, width, height, x_interval, y_interval, margin);
+            DrawAxesAndGridLines(sender, args, 
+                                 width, height,
+                                 x_interval, y_interval,
+                                 x_scale, y_scale,
+                                 min_x, max_y,
+                                 margin);
 
             // if the scale factor for either is not one, we need a new set of data points to graph,
             // and we need to subtract the minimum values from all points in the data range
             if (x_scale != 1 || y_scale != 1)
             {
-                scaled_data_points = ScaleAndTranslateCoordinateData(new_data, x_scale, y_scale, min.X, min.Y);
+                scaled_data_points = ScaleAndTranslateCoordinateData(DataPoints, x_scale, y_scale);
             }
             else
             {
                 scaled_data_points = DataPoints;
-            }
-
-            
-
-
-
-            
-            
+            }           
 
             for (int i = 0; i < scaled_data_points.Count - 1; i++)
             {
@@ -343,8 +340,9 @@ namespace PowerTaskMan.Controls
             return new_data;
         }
 
-        private List<ICoordinatePair> ScaleAndTranslateCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale, float min_x, float min_y)
+        private List<ICoordinatePair> ScaleAndTranslateCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale)
         {
+ 
             var new_data = new List<ICoordinatePair>();
             foreach (var point in data)
             {
@@ -366,7 +364,9 @@ namespace PowerTaskMan.Controls
 
         private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args,
                                         float width, float height,
-                                        float xInterval, float yInterval, 
+                                        float xInterval, float yInterval,
+                                        float xScale, float yScale,
+                                        float xMin, float yMax,
                                         float margin)
         {
             CoordinatePair x_axis_start = new CoordinatePair { X = margin, Y = height - margin };
@@ -385,32 +385,78 @@ namespace PowerTaskMan.Controls
             for (float i = margin + xInterval; i < width_for_gl; i += xInterval)
             {
                 args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridLineColor);
+                float dataValue = xMin + (i - margin) * xScale;
+                args.DrawingSession.DrawText(dataValue.ToString("F2"), i, height - margin + 5, GridLineColor);
             }
 
             // Draw horizontal gridlines.
             for (float i = margin + 1; i < height_for_gl; i += yInterval)
             {
                 args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridLineColor);
+                float dataValue = yMax - (i - margin) * yScale; // yMax at the top, yMin at the bottom
+                args.DrawingSession.DrawText(dataValue.ToString("F2"), margin - 30, i - 10, GridLineColor);
+
             }
         }
 
-        double DetermineAxisGridlineInterval(double rawInterval)
+        /// <summary>
+        /// Determines the <b>data units</b> interval for the gridlines on a particular axis.
+        /// </summary>
+        /// <param name="data_range"></param>
+        /// <returns></returns>
+        float DetermineAxisGridlineInterval(float data_range)
         {
-            if(rawInterval == 0 || rawInterval < 10)
+            if(data_range == 0 || data_range < 10)
             {
                 return 20;
             }
             // 1. Calculate power of 10
-            double magnitude = Math.Pow(10, Math.Floor(Math.Log10(rawInterval)));
+            double nearest_power_ten = Math.Floor(Math.Log10(data_range));
+
+            float magnitude = (float)Math.Pow(10, nearest_power_ten);
 
             // 2. Get the fractional part relative to the magnitude
-            double fraction = rawInterval / magnitude;
+            double fraction = data_range / magnitude;
 
             // 3. Choose a "nice" interval based on the fractional part
             if (fraction <= 1) return magnitude;
             if (fraction <= 2) return 2 * magnitude;
             if (fraction <= 5) return 5 * magnitude;
             return 10 * magnitude;
+        }
+
+        /// <summary>
+        /// Determines the scaling factor for the x and y axes.
+        /// </summary>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
+        /// <param name="margin"></param>
+        /// <param name="data_margin"></param>
+        /// <returns>xScale, yScale</returns>
+        private (float, float) DetermineScalingFactor(float height, float width, float margin, float data_margin)
+        {
+            float x_scale = 1;
+            float y_scale = 1;
+            float effective_width = width - (2 * (margin + data_margin)); // Accounts for the margin
+            float effective_height = height - (2 * (margin + data_margin)); // Accounts for the margin
+
+            if (xRange != effective_width)
+            {
+                if (xRange != 0)
+                    x_scale = effective_width / xRange;
+                else
+                    x_scale = 1;
+            }
+
+            if (yRange != effective_height)
+            {
+                if (yRange != 0)
+                    y_scale = effective_height / yRange;
+                else
+                    y_scale = 1;
+            }
+
+            return (x_scale, y_scale);
         }
     }
 }
