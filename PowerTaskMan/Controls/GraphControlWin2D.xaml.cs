@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using System.Diagnostics;
 using LiveChartsCore.Measure;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Graphics.Canvas.Text;
 
 namespace PowerTaskMan.Controls
 {
@@ -30,7 +31,7 @@ namespace PowerTaskMan.Controls
             "AxisMargin",
             typeof(float),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(10.0f, OnAxisMarginPropertyChanged));
+            new PropertyMetadata(20.0f, OnAxisMarginPropertyChanged));
 
         public static readonly DependencyProperty DataLabelProperty = DependencyProperty.Register(
             "DataLabel",
@@ -93,6 +94,7 @@ namespace PowerTaskMan.Controls
         private float max_x;
         private float max_y;
 
+        private IList<ICoordinatePair> _dataPoints;
         private IList<ICoordinatePair> scaled_data_points;
 
         private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
@@ -209,27 +211,22 @@ namespace PowerTaskMan.Controls
         private static void OnDataPointsPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
-            IList<ICoordinatePair> new_data = (IList<ICoordinatePair>)e.NewValue; // this doesn't create a copy. dang. 
-            new_data.Clear();
+            var originalData = (IList<ICoordinatePair>)e.NewValue;
 
             if (control.UseIndexBasedGraphing)
             {
                 var counter = 0;
-                foreach (var point in (IList<ICoordinatePair>)e.NewValue)
+                for (int i = 0; i < originalData.Count; i++)
                 {
-                    var new_coord_pair = new CoordinatePair { X = counter, Y = point.Y };
-                    new_data.Add(new_coord_pair);
+                    originalData[i] = new CoordinatePair { X = counter, Y = originalData[i].Y };
                     counter++;
                 }
-
             }
-            else
-            {
-                new_data = (IList<ICoordinatePair>)e.NewValue;
-            }
-            control.min_x = new_data.MinBy(new_data => new_data.X).X;
-            control.min_y = new_data.MinBy(new_data => new_data.Y).Y;
-            control.DataPoints = new_data;
+     
+            control.min_x = originalData.MinBy(new_data => new_data.X).X;
+            control.min_y = originalData.MinBy(new_data => new_data.Y).Y;
+            control.max_x = originalData.MaxBy(new_data => new_data.X).X;
+            control.max_y = originalData.MaxBy(new_data => new_data.Y).Y;
             control.refresh_request_cache.Add(true);
         }
 
@@ -273,7 +270,7 @@ namespace PowerTaskMan.Controls
             var session = args.DrawingSession;
             ClearCanvas(sender, args);
 
-            if (DataPoints == null || DataPoints.Count < 2)
+            if (DataPoints == null || DataPoints.Count < 2 || xRange == 0 || yRange == 0)
                 return;
 
             // Draw axes
@@ -283,8 +280,8 @@ namespace PowerTaskMan.Controls
 
             // Calculate the graph's origin
             float data_margin = AxisMargin;
-            float origin_x = 0 + margin + data_margin;
-            float origin_y = 0 - margin + height - data_margin;
+            float origin_x = 0 + margin;
+            float origin_y = 0 - margin + height;
 
     
 
@@ -300,7 +297,7 @@ namespace PowerTaskMan.Controls
                                  width, height,
                                  x_interval, y_interval,
                                  x_scale, y_scale,
-                                 min_x, max_y,
+                                 this.min_x, this.min_y,
                                  margin);
 
             // if the scale factor for either is not one, we need a new set of data points to graph,
@@ -342,7 +339,6 @@ namespace PowerTaskMan.Controls
 
         private List<ICoordinatePair> ScaleAndTranslateCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale)
         {
- 
             var new_data = new List<ICoordinatePair>();
             foreach (var point in data)
             {
@@ -364,9 +360,9 @@ namespace PowerTaskMan.Controls
 
         private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args,
                                         float width, float height,
-                                        float xInterval, float yInterval,
+                                        float xIntervalDataUnits, float yIntervalDataUnits,
                                         float xScale, float yScale,
-                                        float xMin, float yMax,
+                                        float xMin, float yMin,
                                         float margin)
         {
             CoordinatePair x_axis_start = new CoordinatePair { X = margin, Y = height - margin };
@@ -378,24 +374,39 @@ namespace PowerTaskMan.Controls
             args.DrawingSession.DrawLine(y_axis_start.X, y_axis_start.Y, y_axis_end.X, y_axis_end.Y, AxesColor, 2);
 
             float width_for_gl = width - (1 * margin);
-            float height_for_gl = height - (1 * margin);
-        
+            float height_for_gl = height;
+
+            float x_gridlines_graphics_interval = xIntervalDataUnits * xScale;
+            float y_gridlines_graphics_interval = yIntervalDataUnits * yScale;
+
+            var textFormat = new CanvasTextFormat
+            {
+                FontSize = 12, // Set font size to 24 points
+                FontFamily = "Arial", // Optional: Set font family
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                VerticalAlignment = CanvasVerticalAlignment.Center
+            };
+
 
             // Draw vertical gridlines.
-            for (float i = margin + xInterval; i < width_for_gl; i += xInterval)
+            float gridline_counter = 0;
+            for (float i = margin; i < width_for_gl; i += x_gridlines_graphics_interval)
             {
                 args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridLineColor);
-                float dataValue = xMin + (i - margin) * xScale;
-                args.DrawingSession.DrawText(dataValue.ToString("F2"), i, height - margin + 5, GridLineColor);
+                float dataValue = xMin + (gridline_counter * xIntervalDataUnits);
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), i, height_for_gl - 10, Colors.Black, textFormat);
+                gridline_counter++;
             }
 
+            gridline_counter = 0;
+
             // Draw horizontal gridlines.
-            for (float i = margin + 1; i < height_for_gl; i += yInterval)
+            for (float i = y_axis_end.Y; i > margin; i -= y_gridlines_graphics_interval)
             {
                 args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridLineColor);
-                float dataValue = yMax - (i - margin) * yScale; // yMax at the top, yMin at the bottom
-                args.DrawingSession.DrawText(dataValue.ToString("F2"), margin - 30, i - 10, GridLineColor);
-
+                float dataValue = yMin + (gridline_counter * yIntervalDataUnits); // yMax at the top, yMin at the bottom
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), margin - 5, i, Colors.Black, textFormat);
+                gridline_counter++;
             }
         }
 
@@ -404,25 +415,30 @@ namespace PowerTaskMan.Controls
         /// </summary>
         /// <param name="data_range"></param>
         /// <returns></returns>
-        float DetermineAxisGridlineInterval(float data_range)
+        float DetermineAxisGridlineInterval(float data_range, float more_or_less_gridlines = 1)
         {
-            if(data_range == 0 || data_range < 10)
+            if(data_range == 0 || data_range < 1)
             {
-                return 20;
+                return 1;
             }
             // 1. Calculate power of 10
             double nearest_power_ten = Math.Floor(Math.Log10(data_range));
+            double next_lowest_power_ten = nearest_power_ten - 1;
 
-            float magnitude = (float)Math.Pow(10, nearest_power_ten);
+            float magnitude = (float)Math.Pow(10, next_lowest_power_ten);
 
             // 2. Get the fractional part relative to the magnitude
-            double fraction = data_range / magnitude;
+            float fraction = (data_range / magnitude) * more_or_less_gridlines;
 
             // 3. Choose a "nice" interval based on the fractional part
-            if (fraction <= 1) return magnitude;
-            if (fraction <= 2) return 2 * magnitude;
-            if (fraction <= 5) return 5 * magnitude;
-            return 10 * magnitude;
+            float interval;
+            if (fraction <= 3) interval = 3.0f;
+            else if (fraction <= 6) interval = (float)Math.Round(fraction);
+            else interval = 6.0f;
+
+            // 4. Ensure no more than 15 gridlines
+            float max_interval = data_range / 10.0f; // Maximum allowable interval for 15 gridlines
+            return Math.Max(interval, (float)Math.Round(max_interval));
         }
 
         /// <summary>

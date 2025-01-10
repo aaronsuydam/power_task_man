@@ -32,7 +32,7 @@
             FontSize="20"
             Text="Performance" />
 
-        <controls:GraphControlWin2D
+        <!--<controls:GraphControlWin2D
             Grid.Row="1"
             Grid.Column="1"
             Title="Memory Use (%)"
@@ -40,7 +40,7 @@
             DataPointColor="{StaticResource ColorMagentaRaw}"
             DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
             LineColor="{StaticResource ColorMagentaRaw}"
-            UseIndexBasedGraphing="True" />
+            UseIndexBasedGraphing="True" />-->
 
 
 

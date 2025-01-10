@@ -22,7 +22,7 @@ namespace PowerTaskMan.ViewModels
         public CPUPerfService cpuPerfService { get; set; } = new();
         public MemoryService memoryService { get; set; } = new();
 
-        public int UpdateSpeedMilliseconds { get; set; } = 500;
+        public int UpdateSpeedMilliseconds { get; set; } = 250;
 
         [ObservableProperty]
         string usedMemoryMBString = "";
@@ -52,12 +52,12 @@ namespace PowerTaskMan.ViewModels
 
         [ObservableProperty]
         List<ICoordinatePair> cpuFrequencyChartSeries = new List<ICoordinatePair>(
-            Enumerable.Range(0, 120).Select(_ => new CoordinatePair { X = 0, Y = 0 })
+            Enumerable.Range(0, 121).Select(_ => new CoordinatePair { X = 0, Y = 0 })
         );
 
         [ObservableProperty]
         List<ICoordinatePair> memoryUseChartSeries = new List<ICoordinatePair>(
-            Enumerable.Range(0, 60).Select(_ => new CoordinatePair { X = 0, Y = 0 })
+            Enumerable.Range(0, 61).Select(_ => new CoordinatePair { X = 0, Y = 0 })
         );
 
         public ObservableCollection<ObservableCollection<ISeries>> UtilizationChartSeriesCollection { get; set; }
@@ -88,7 +88,7 @@ namespace PowerTaskMan.ViewModels
                     {
                         UpdateMemoryChartData();
                     });
-                    Task.Delay(500).Wait();
+                    Task.Delay(250).Wait();
                 }
             });
 
@@ -101,7 +101,7 @@ namespace PowerTaskMan.ViewModels
                     {
                         UpdateCPUUtilizationChart();
                     });
-                    Task.Delay(500).Wait();
+                    Task.Delay(250).Wait();
                 }
             });
 
