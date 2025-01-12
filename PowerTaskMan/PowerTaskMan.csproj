@@ -13,6 +13,7 @@
     <EnableMsixTooling>true</EnableMsixTooling>
     <PlatformTarget>x64</PlatformTarget>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <PublishAot>False</PublishAot>
 
   </PropertyGroup>
   <ItemGroup>

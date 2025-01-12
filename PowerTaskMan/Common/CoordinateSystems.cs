@@ -13,7 +13,7 @@ namespace PowerTaskMan.Common
         public float Y { get; set; }
     }
 
-    class CoordinatePair : ICoordinatePair
+    public class CoordinatePair : ICoordinatePair
     {
         public float X { get; set; }
         public float Y { get; set; }

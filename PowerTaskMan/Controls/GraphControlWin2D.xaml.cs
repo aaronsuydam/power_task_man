@@ -16,53 +16,63 @@ using LiveChartsCore.Measure;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.Graphics.Canvas.Text;
 using SkiaSharp.Views.Windows;
+using Microsoft.Graphics.Canvas;
 
 namespace PowerTaskMan.Controls
 {
+    public class AxisStyle
+    {
+        public Color Color { get; set; } = Colors.Gray;
+        public float Margin { get; set; } = 20.0f;
+    }
+
+    public class DataPointStyle
+    {
+        public Color PointColor { get; set; } = Colors.Black;
+        public Color LineColor { get; set; } = Colors.Black;
+        public bool ShowPoints { get; set; } = true;
+        public bool ShowLines { get; set; } = true;
+        public float PointRadius { get; set; } = 3.0f;
+        public float LineThickness { get; set; } = 2.0f;
+    }
+
+    public class GridStyle
+    {
+        public Color LineColor { get; set; } = Colors.LightGray;
+    }
+
     public sealed partial class GraphControlWin2D : UserControl
     {
         // Dependency Properties
-        public static readonly DependencyProperty AxesColorProperty = DependencyProperty.Register(
-            "AxesColor",
-            typeof(Color),
+        public static readonly DependencyProperty AxisCustomizationProperty = DependencyProperty.Register(
+            "AxisCustomization",
+            typeof(AxisStyle),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(Colors.Gray, OnAxesColorPropertyChanged));
+            new PropertyMetadata(new AxisStyle(), OnAxisCustomizationPropertyChanged));
 
-        public static readonly DependencyProperty AxisMarginProperty = DependencyProperty.Register(
-            "AxisMargin",
-            typeof(float),
+        public static readonly DependencyProperty DataPointCustomizationProperty = DependencyProperty.Register(
+            "DataPointCustomization",
+            typeof(DataPointStyle),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(20.0f, OnAxisMarginPropertyChanged));
+            new PropertyMetadata(new DataPointStyle(), OnDataPointCustomizationPropertyChanged));
+
+        public static readonly DependencyProperty GridCustomizationProperty = DependencyProperty.Register(
+            "GridCustomization",
+            typeof(GridStyle),
+            typeof(GraphControlWin2D),
+            new PropertyMetadata(new GridStyle(), OnGridCustomizationPropertyChanged));
 
         public static readonly DependencyProperty DataLabelProperty = DependencyProperty.Register(
             "DataLabel",
             typeof(string),
             typeof(GraphControlWin2D),
-            new PropertyMetadata(System.String.Empty, OnDataLabelChanged));
-
-        public static readonly DependencyProperty DataPointColorProperty = DependencyProperty.Register(
-            "DataPointColor",
-            typeof(Color),
-            typeof(GraphControlWin2D),
-            new PropertyMetadata(Colors.Black));
+            new PropertyMetadata(string.Empty, OnDataLabelChanged));
 
         public static readonly DependencyProperty DataPointsProperty = DependencyProperty.Register(
             "DataPoints",
             typeof(IList<ICoordinatePair>),
             typeof(GraphControlWin2D),
             new PropertyMetadata(new List<ICoordinatePair>(), OnDataPointsPropertyChanged));
-
-        public static readonly DependencyProperty GridLineColorProperty = DependencyProperty.Register(
-            "GridLineColor",
-            typeof(Color),
-            typeof(GraphControlWin2D),
-            new PropertyMetadata(Colors.LightGray));
-
-        public static readonly DependencyProperty LineColorProperty = DependencyProperty.Register(
-            "LineColor",
-            typeof(Color),
-            typeof(GraphControlWin2D),
-            new PropertyMetadata(Colors.Black, OnLineColorPropertyChanged));
 
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register(
             nameof(Title),
@@ -72,7 +82,7 @@ namespace PowerTaskMan.Controls
             {
                 var gc = d as GraphControlWin2D;
                 gc.Title = e.NewValue?.ToString() ?? "";
-                if(gc.ChartTitleTextBlock != null)
+                if (gc.ChartTitleTextBlock != null)
                 {
                     gc.ChartTitleTextBlock.Text = gc.Title;
                 }
@@ -86,20 +96,15 @@ namespace PowerTaskMan.Controls
 
         // Member Variables
         private IList<bool> refresh_request_cache = new List<bool>();
-
         private float xRange;
         private float yRange;
-
         private float min_x;
         private float min_y;
         private float max_x;
         private float max_y;
-
         private IList<ICoordinatePair> _dataPoints;
         private IList<ICoordinatePair> scaled_data_points;
-
         private bool notinit = true;
-
         private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
         private SolidColorBrush _text_brush = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
 
@@ -109,7 +114,6 @@ namespace PowerTaskMan.Controls
             this.InitializeComponent();
             GraphControlBorderXamlRef.Translation = new System.Numerics.Vector3(0, 0, 16);
             GraphControlBorderXamlRef.Shadow = new ThemeShadow();
-
             GraphControlBorderXamlRef.Background = _background_brush;
 
             Task.Run(() =>
@@ -130,17 +134,24 @@ namespace PowerTaskMan.Controls
             });
         }
 
-        // Properties
-        public Color AxesColor
+
+        /// Public Properties
+        public AxisStyle AxisCustomization
         {
-            get { return (Color)GetValue(AxesColorProperty); }
-            set { SetValue(AxesColorProperty, value); }
+            get { return (AxisStyle)GetValue(AxisCustomizationProperty); }
+            set { SetValue(AxisCustomizationProperty, value); }
         }
 
-        public float AxisMargin
+        public DataPointStyle DataPointCustomization
         {
-            get { return (float)GetValue(AxisMarginProperty); }
-            set { SetValue(AxisMarginProperty, value); }
+            get { return (DataPointStyle)GetValue(DataPointCustomizationProperty); }
+            set { SetValue(DataPointCustomizationProperty, value); }
+        }
+
+        public GridStyle GridCustomization
+        {
+            get { return (GridStyle)GetValue(GridCustomizationProperty); }
+            set { SetValue(GridCustomizationProperty, value); }
         }
 
         public string DataLabel
@@ -149,28 +160,10 @@ namespace PowerTaskMan.Controls
             set => SetValue(DataLabelProperty, value);
         }
 
-        public Color DataPointColor
-        {
-            get { return (Color)GetValue(DataPointColorProperty); }
-            set { SetValue(DataPointColorProperty, value); }
-        }
-
         public IList<ICoordinatePair> DataPoints
         {
             get { return (IList<ICoordinatePair>)GetValue(DataPointsProperty); }
             set { SetValue(DataPointsProperty, value); }
-        }
-
-        public Color GridLineColor
-        {
-            get { return (Color)GetValue(GridLineColorProperty); }
-            set { SetValue(GridLineColorProperty, value); }
-        }
-
-        public Color LineColor
-        {
-            get { return (Color)GetValue(LineColorProperty); }
-            set { SetValue(LineColorProperty, value); }
         }
 
         public string Title
@@ -186,22 +179,83 @@ namespace PowerTaskMan.Controls
         }
 
         // Member Methods
+        // Drawing action delegates
+        private delegate void DrawAction(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization);
+
+        private DrawAction GetDrawAction()
+        {
+            // Select drawing strategy based on current settings - this happens once per draw call
+            if (this.DataPointCustomization.ShowLines && DataPointCustomization.ShowPoints)
+                return DrawLinesAndPoints;
+            else if (DataPointCustomization.ShowLines)
+                return DrawLinesOnly;
+            else if (DataPointCustomization.ShowPoints)
+                return DrawPointsOnly;
+            else
+                return NoDrawAction;
+        }
+
+        // Specialized drawing methods with no branching in their hot paths
+        private static void DrawLinesAndPoints(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization)
+        {
+            // Draw all lines
+            for (int i = 0; i < coordinates.Count - 1; i++)
+            {
+                var (x1, y1) = coordinates[i];
+                var (x2, y2) = coordinates[i + 1];
+                session.DrawLine(x1, y1, x2, y2, customization.LineColor, customization.LineThickness);
+            }
+
+            // Draw all points
+            foreach (var (x, y) in coordinates)
+            {
+                session.FillCircle(x, y, customization.PointRadius, customization.PointColor);
+            }
+        }
+
+        private static void DrawLinesOnly(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization)
+        {
+            for (int i = 0; i < coordinates.Count - 1; i++)
+            {
+                var (x1, y1) = coordinates[i];
+                var (x2, y2) = coordinates[i + 1];
+                session.DrawLine(x1, y1, x2, y2, customization.LineColor, customization.LineThickness);
+            }
+        }
+
+        private static void DrawPointsOnly(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization)
+        {
+            foreach (var (x, y) in coordinates)
+            {
+                session.FillCircle(x, y, customization.PointRadius, customization.PointColor);
+            }
+        }
+
+        private static void NoDrawAction(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization)
+        {
+            // Do nothing
+        }
+
         public void Invalidate()
         {
             Canvas.Invalidate();
         }
 
-        private static void OnAxesColorPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
+        private static void OnAxisCustomizationPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
-            control.AxesColor = (Color)e.NewValue;
             control.refresh_request_cache.Add(true);
         }
 
-        private static void OnAxisMarginPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
+        private static void OnDataPointCustomizationPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
         {
             var control = (GraphControlWin2D)dobj;
-            control.AxisMargin = (float)e.NewValue;
+            control.refresh_request_cache.Add(true);
+        }
+
+        private static void OnGridCustomizationPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
+        {
+            var control = (GraphControlWin2D)dobj;
             control.refresh_request_cache.Add(true);
         }
 
@@ -225,19 +279,12 @@ namespace PowerTaskMan.Controls
                     counter++;
                 }
             }
-     
+
             control.min_x = originalData.MinBy(new_data => new_data.X).X;
             control.min_y = originalData.MinBy(new_data => new_data.Y).Y;
             control.max_x = originalData.MaxBy(new_data => new_data.X).X;
             control.max_y = originalData.MaxBy(new_data => new_data.Y).Y;
             control.notinit = false;
-            control.refresh_request_cache.Add(true);
-        }
-
-        private static void OnLineColorPropertyChanged(DependencyObject dobj, DependencyPropertyChangedEventArgs e)
-        {
-            var control = (GraphControlWin2D)dobj;
-            //control.LineColor = (Color)e.NewValue;
             control.refresh_request_cache.Add(true);
         }
 

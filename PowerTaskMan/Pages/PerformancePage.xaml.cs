@@ -24,6 +24,8 @@ using PowerTaskMan.Services;
 using PowerTaskMan.ViewModels;
 using Windows.UI.ViewManagement;
 using PowerTaskMan.Common;
+using Microsoft.UI.Xaml.Automation;
+using PowerTaskMan.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -115,6 +117,21 @@ namespace power_task_man.Pages
         private void MemoryButtonClick(object sender, RoutedEventArgs e)
         {
             viewModel.BeginMonitoring(this.DispatcherQueue);
+        }
+
+        private void ItemsRepeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
+        {
+  
+            if (sender.TryGetElement(args.Index) is FrameworkElement element)
+            {
+                element.SetValue(AutomationProperties.NameProperty, $"Core {args.Index}");
+                var graph = element as GraphControlWin2D;
+                if (graph != null)
+                {
+                    graph.Title = $"Core {args.Index} Frequency (MHz)";
+                }
+            
+            }
         }
     }
 }

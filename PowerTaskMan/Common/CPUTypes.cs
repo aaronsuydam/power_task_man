@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace PowerTaskMan.Common
@@ -33,5 +35,12 @@ namespace PowerTaskMan.Common
         {
             return $"Core {CoreNumber}: {CoreFrequency} MHz, {CoreUtilizationPercent}%";
         }
+    }
+
+    public partial class CoreFrequencyData : ObservableObject
+    {
+        [ObservableProperty]
+        List<ICoordinatePair> frequencyData;
+        public int CoreNumber { get; set; }
     }
 }
