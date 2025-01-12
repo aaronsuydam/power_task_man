@@ -61,7 +61,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 HorizontalTextAlignment="Center"
-                Visibility="{x:Bind Title, Converter={StaticResource EmptyStringToVisibilityConverter}, Mode=OneWay}" />
+                Visibility="{x:Bind DataLabel, Converter={StaticResource EmptyStringToVisibilityConverter}, Mode=OneWay}" />
 
         </Grid>
     </Border>

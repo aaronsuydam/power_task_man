@@ -15,6 +15,7 @@ using System.Diagnostics;
 using LiveChartsCore.Measure;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.Graphics.Canvas.Text;
+using SkiaSharp.Views.Windows;
 
 namespace PowerTaskMan.Controls
 {
@@ -100,7 +101,7 @@ namespace PowerTaskMan.Controls
         private bool notinit = true;
 
         private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-        private SolidColorBrush _foreground_brush;
+        private SolidColorBrush _text_brush = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
 
         // Constructor
         public GraphControlWin2D()
@@ -370,8 +371,12 @@ namespace PowerTaskMan.Controls
         {
             var session = args.DrawingSession;
             var backgroundColor = _background_brush.Color;
-            var opaqueColor = Color.FromArgb(190, 251, 251, 251); // Remove the alpha (255 = fully opaque)
-            session.Clear(opaqueColor);
+            var a = backgroundColor.A;
+            var b = backgroundColor.B;
+            var g = backgroundColor.G;
+            var r = backgroundColor.R;
+            var rgb = Color.FromArgb(a, r, g, b); // Remove the alpha (255 = fully opaque)
+            session.Clear(rgb);
         }
 
         private void DrawAxesAndGridLines(CanvasControl sender, CanvasDrawEventArgs args,
@@ -410,7 +415,7 @@ namespace PowerTaskMan.Controls
             {
                 args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridLineColor);
                 float dataValue = xMin + (gridline_counter * xIntervalDataUnits);
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), i, height_for_gl - 10, Colors.Black, textFormat);
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), i, height_for_gl - 10, _text_brush.Color, textFormat);
                 gridline_counter++;
             }
 
@@ -421,7 +426,7 @@ namespace PowerTaskMan.Controls
             {
                 args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridLineColor);
                 float dataValue = yMin + (gridline_counter * yIntervalDataUnits); // yMax at the top, yMin at the bottom
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), margin - 5, i, Colors.Black, textFormat);
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), margin - 5, i, _text_brush.Color, textFormat);
                 gridline_counter++;
             }
         }

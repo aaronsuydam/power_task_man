@@ -33,9 +33,9 @@
             Text="Performance" />
 
         <controls:GraphControlWin2D
+            Title="Memory Use (%)"
             Grid.Row="1"
             Grid.Column="1"
-            Title="Memory Use (%)"
             DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
             DataPointColor="{StaticResource ColorMagentaRaw}"
             DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
@@ -43,16 +43,14 @@
             UseIndexBasedGraphing="True" />
 
 
-
-
-
-
-        <!--<controls:GraphControlWin2D
+        <controls:GraphControlWin2D
+            Title="CPU Frequency (MHz)"
             Grid.Row="1"
+            DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
             DataPointColor="{StaticResource ColorBlueRaw}"
             DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
             LineColor="{StaticResource ColorBlueRaw}"
-            UseIndexBasedGraphing="True" />-->
+            UseIndexBasedGraphing="True" />
 
 
         <Border
@@ -61,6 +59,23 @@
             Grid.ColumnSpan="2"
             BorderBrush="DarkGray"
             BorderThickness="1"
-            CornerRadius="5" />
+            CornerRadius="5">
+
+            <ItemsView ItemsSource="{x:Bind viewModel.}"
+                <ItemsView.ItemTemplate>
+                    <DataTemplate>
+                        <controls:GraphControlWin2D
+                        Title="CPU Frequency (MHz)"
+                        DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
+                        DataPointColor="{StaticResource ColorBlueRaw}"
+                        DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
+                        LineColor="{StaticResource ColorBlueRaw}"
+                        UseIndexBasedGraphing="True" />
+                    </DataTemplate>
+                    
+                </ItemsView.ItemTemplate>
+            </ItemsView>
+
+        </Border>
     </Grid>
 </Page>

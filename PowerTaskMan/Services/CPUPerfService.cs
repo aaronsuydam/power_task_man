@@ -11,8 +11,6 @@ namespace power_task_man.Services
 {
     public partial class CPUPerfService
     {
-        public ObservableCollection<ISeries> FrequencyHistoryChartSeries { get; set; } = new();
-
         CancellationTokenSource cpu_freq;
 
         public List<CPUCore> cores;
