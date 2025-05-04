@@ -19,6 +19,7 @@
   <ItemGroup>
     <Content Remove="Assets\Colors.xaml" />
     <Content Remove="Assets\PowerTaskManLogo.png" />
+    <Content Remove="Assets\Readme.md" />
     <Content Remove="Assets\Styles.xaml" />
   </ItemGroup>
   <ItemGroup>
