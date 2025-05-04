@@ -1,0 +1,339 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>PowerTaskMan</name>
+    </assembly>
+    <members>
+        <member name="T:PowerTaskMan.App">
+            <summary>
+            Provides application-specific behavior to supplement the default Application class.
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.App.#ctor">
+            <summary>
+            Initializes the singleton application object.  This is the first line of authored code
+            executed, and as such is the logical equivalent of main() or WinMain().
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.App.OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs)">
+            <summary>
+            Invoked when the application is launched.
+            </summary>
+            <param name="args">Details about the launch request and process.</param>
+        </member>
+        <member name="M:PowerTaskMan.App.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.App.GetXamlType(System.Type)">
+            <summary>
+            GetXamlType(Type)
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.App.GetXamlType(System.String)">
+            <summary>
+            GetXamlType(String)
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.App.GetXmlnsDefinitions">
+            <summary>
+            GetXmlnsDefinitions()
+            </summary>
+        </member>
+        <member name="P:PowerTaskMan.Controls.GraphControlWin2D.AxisCustomization">
+            Public Properties
+        </member>
+        <member name="M:PowerTaskMan.Controls.GraphControlWin2D.DetermineAxisGridlineInterval(System.Single,System.Single)">
+            <summary>
+            Determines the <b>data units</b> interval for the gridlines on a particular axis.
+            </summary>
+            <param name="data_range"></param>
+            <returns></returns>
+        </member>
+        <member name="M:PowerTaskMan.Controls.GraphControlWin2D.DetermineScalingFactor(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Determines the scaling factor for the x and y axes.
+            </summary>
+            <param name="height"></param>
+            <param name="width"></param>
+            <param name="margin"></param>
+            <param name="data_margin"></param>
+            <returns>xScale, yScale</returns>
+        </member>
+        <member name="M:PowerTaskMan.Controls.GraphControlWin2D.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.Controls.GraphControlWin2D.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.Controls.GraphControlWin2D.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:PowerTaskMan.MainWindow">
+            <summary>
+            An empty window that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.MainWindow.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.MainWindow.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:PowerTaskMan.Services.CoreFrequencyData">
+            <inheritdoc/>
+        </member>
+        <member name="P:PowerTaskMan.Services.CoreFrequencyData.FrequencyData">
+            <inheritdoc cref="F:PowerTaskMan.Services.CoreFrequencyData.frequencyData"/>
+        </member>
+        <member name="M:PowerTaskMan.Services.CPUPerfService.UpdateCPUStats">
+            <summary>
+            Updates the frequency for each core in the system.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:PowerTaskMan.ViewModels.PerformanceViewModel">
+            <inheritdoc/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.UsedMemoryMBString">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.usedMemoryMBString"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.AvailableMemoryMB">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.availableMemoryMB"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.TotalMemoryMB">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.totalMemoryMB"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.UsedMemoryMB">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.usedMemoryMB"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.UsedMemoryPercent">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.usedMemoryPercent"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.CurrentFrequency">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.currentFrequency"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.CpuFrequencyChartSeries">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.cpuFrequencyChartSeries"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.MemoryUseChartSeries">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.memoryUseChartSeries"/>
+        </member>
+        <member name="P:PowerTaskMan.ViewModels.PerformanceViewModel.PerCoreCPUFrequencySeries">
+            <inheritdoc cref="F:PowerTaskMan.ViewModels.PerformanceViewModel.perCoreCPUFrequencySeries"/>
+        </member>
+        <member name="T:PowerTaskMan.Program">
+            <summary>
+            Program class
+            </summary>
+        </member>
+        <member name="T:PowerTaskMan.PowerTaskMan_XamlTypeInfo.XamlMetaDataProvider">
+            <summary>
+            Main class for providing metadata for the app or library
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.PowerTaskMan_XamlTypeInfo.XamlMetaDataProvider.GetXamlType(System.Type)">
+            <summary>
+            GetXamlType(Type)
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.PowerTaskMan_XamlTypeInfo.XamlMetaDataProvider.GetXamlType(System.String)">
+            <summary>
+            GetXamlType(String)
+            </summary>
+        </member>
+        <member name="M:PowerTaskMan.PowerTaskMan_XamlTypeInfo.XamlMetaDataProvider.GetXmlnsDefinitions">
+            <summary>
+            GetXmlnsDefinitions()
+            </summary>
+        </member>
+        <member name="T:power_task_man.Pages.OverviewPage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.OverviewPage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.OverviewPage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.OverviewPage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:power_task_man.Pages.PerformancePage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.PerformancePage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.PerformancePage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.PerformancePage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:power_task_man.Pages.ProcessesPage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ProcessesPage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ProcessesPage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ProcessesPage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:power_task_man.Pages.ServicesPage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ServicesPage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ServicesPage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.ServicesPage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:power_task_man.Pages.SettingsPage">
+            <summary>
+            An empty page that can be used on its own or navigated to within a Frame.
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.SettingsPage.InitializeComponent">
+            <summary>
+            InitializeComponent()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.SettingsPage.Connect(System.Int32,System.Object)">
+            <summary>
+            Connect()
+            </summary>
+        </member>
+        <member name="M:power_task_man.Pages.SettingsPage.GetBindingConnector(System.Int32,System.Object)">
+            <summary>
+            GetBindingConnector(int connectionId, object target)
+            </summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.FrequencyData">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "FrequencyData" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.UsedMemoryMBString">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "UsedMemoryMBString" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.AvailableMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "AvailableMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.TotalMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "TotalMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.UsedMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "UsedMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.UsedMemoryPercent">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "UsedMemoryPercent" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CurrentFrequency">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CurrentFrequency" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.CpuFrequencyChartSeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "CpuFrequencyChartSeries" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.MemoryUseChartSeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "MemoryUseChartSeries" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.PerCoreCPUFrequencySeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "PerCoreCPUFrequencySeries" generated properties.</summary>
+        </member>
+        <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
+            <summary>
+            A helper type providing cached, reusable <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instances
+            for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
+            </summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.FrequencyData">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "FrequencyData" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.UsedMemoryMBString">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "UsedMemoryMBString" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.AvailableMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "AvailableMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.TotalMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "TotalMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.UsedMemoryMB">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "UsedMemoryMB" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.UsedMemoryPercent">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "UsedMemoryPercent" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CurrentFrequency">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CurrentFrequency" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.CpuFrequencyChartSeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "CpuFrequencyChartSeries" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.MemoryUseChartSeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "MemoryUseChartSeries" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.PerCoreCPUFrequencySeries">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "PerCoreCPUFrequencySeries" generated properties.</summary>
+        </member>
+    </members>
+</doc>

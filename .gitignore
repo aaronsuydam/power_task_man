@@ -2,9 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/PowerTaskMan/.vs
-/PowerTaskMan/bin/x64/Debug
-/PowerTaskMan/obj
-/PowerTaskMan/.conan
+
 /.vs/power_task_man/CopilotIndices/17.12.38.29086
 /.vs
