@@ -1,19 +1,39 @@
-﻿using LiveChartsCore;
-using PowerTaskMan.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Management;
 using System.Threading;
+using dotPerfStat;
+using dotPerfStat.Types;
+using CommunityToolkit.Mvvm.ComponentModel;
+using PowerTaskMan.Common;
 
-namespace power_task_man.Services
+namespace PowerTaskMan.Services
 {
-    public partial class CPUPerfService
+    public partial class CoreFrequencyData : ObservableObject
     {
+        [ObservableProperty]
+        List<ICoordinatePair> frequencyData;
+        public int CoreNumber { get; set; }
+    }
+    
+    public interface ICPUPerfService
+    {
+        public List<WinCPUCore> Cores { get; }
+        public List<StreamingCorePerfData> UpdateCPUStats();
+    }
+    
+    public partial class CPUPerfService : ICPUPerfService
+    {
+
+        private List<WinCPUCore> _cores = new();
+        private IObserver<IStreamingCorePerfData> _perfDataObserver;
+        private List<IDisposable> _corePerfSubscriptions;
+        
+        Collection<int> frequencyHistory = new();
+
         CancellationTokenSource cpu_freq;
 
-        public List<CPUCore> cores;
+        public List<WinCPUCore> Cores => _cores;
 
         UInt32 max_freq = 0;
 
@@ -21,47 +41,32 @@ namespace power_task_man.Services
         {
             int core_count = Environment.ProcessorCount;
 
-            cores = new List<CPUCore>();
             for (int i = 0; i < core_count; i++)
             {
-                cores.Add(new CPUCore(i));
+                WinCPUCore newCore = new((u8)i);
+                _cores.Add(newCore);
             }
 
-            // Retrieve the maximum clock speed of the cpu from WMI and store it
-            // Create a ManagementObjectSearcher to query Win32_Processor
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher("select MaxClockSpeed, CurrentClockSpeed, Name from Win32_Processor");
-
-            foreach (ManagementObject obj in searcher.Get())
-            {
-                Debug.WriteLine("Processor Name: " + obj["Name"]);
-                Debug.WriteLine("Max Clock Speed: " + obj["MaxClockSpeed"] + " MHz");
-                Debug.WriteLine("Current Clock Speed: " + obj["CurrentClockSpeed"] + " MHz");
-                Debug.WriteLine("---------------------------------------");
-                max_freq = (uint)obj["MaxClockSpeed"];
-            }
         }
 
         /// <summary>
-        /// Returns a list of the per-core CPU frequencies in kHz
+        /// Updates the frequency for each core in the system.
         /// </summary>
         /// <returns></returns>
-        public void UpdateFrequencies()
+        public List<StreamingCorePerfData> UpdateCPUStats()
         {
-            foreach (var core in cores)
+            List<StreamingCorePerfData> newStats = new();
+            foreach (var core in Cores)
             {
-                float cpuPerformance = core.frequency.NextValue();
-                UInt64 frequency_hz = ((UInt64)(cpuPerformance * max_freq * 10 * 1000)); // Frequency is in kHz
-                core.CoreFrequency = frequency_hz;
+                var updated_core_stats = core.Update();
+                newStats.Add(updated_core_stats);
             }
+            return newStats;
         }
 
-        public void UpdateUtilizations()
-        {
-            foreach (var core in cores)
-            {
-                float utilization = core.utilization.NextValue();
-                core.CoreUtilizationPercent = utilization;
-            }
-        }
+      
+
+
+
     }
 }

@@ -1,0 +1,40 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:PowerTaskMan.Controls">
+
+    <!-- Color brushes -->
+    <ResourceDictionary.MergedDictionaries>
+        <!-- if Colors.xaml is in the same Resources folder -->
+        <ResourceDictionary Source="/Assets/Colors.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+    <!-- Lawn Green -->
+
+    <!-- CPU Styles -->
+    <controls:AxisStyle    x:Key="CPU_AxisStyle"    Color="{StaticResource CPUBrush}"    Margin="0"/>
+    <controls:DataPointStyle x:Key="CPU_DataPointStyle"
+                          PointColor="{StaticResource CPUBrush}"
+                          ShowLines="True"
+                          ShowPoints="True"
+                          PointRadius="1"/>
+    <controls:LineStyle    x:Key="CPU_LineStyle"    LineColor="{StaticResource CPUBrush}"    LineThickness="1"/>
+
+    <!-- Memory Styles -->
+    <controls:AxisStyle    x:Key="Memory_AxisStyle"    Color="{StaticResource MemoryBrush}"    Margin="0"/>
+    <controls:DataPointStyle x:Key="Memory_DataPointStyle"
+                          PointColor="{StaticResource MemoryBrush}"
+                          ShowLines="True"
+                          ShowPoints="True"
+                          PointRadius="1"/>
+    <controls:LineStyle    x:Key="Memory_LineStyle"    LineColor="{StaticResource MemoryBrush}"    LineThickness="1"/>
+
+    <!-- GPU Styles -->
+    <controls:AxisStyle    x:Key="GPU_AxisStyle"    Color="{StaticResource GPUBrush}"    Margin="0"/>
+    <controls:DataPointStyle x:Key="GPU_DataPointStyle"
+                          PointColor="{StaticResource GPUBrush}"
+                          ShowLines="True"
+                          ShowPoints="True"
+                          PointRadius="1"/>
+    <controls:LineStyle    x:Key="GPU_LineStyle"    LineColor="{StaticResource GPUBrush}"    LineThickness="1"/>
+
+</ResourceDictionary>

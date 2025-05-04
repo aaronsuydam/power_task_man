@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.UI.Dispatching;
-using power_task_man.Services;
+using PowerTaskMan.Services;
 using PowerTaskMan.Common;
 using PowerTaskMan.Services;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using dotPerfStat.Types;
 
 namespace PowerTaskMan.ViewModels
 {
@@ -59,7 +60,7 @@ namespace PowerTaskMan.ViewModels
 
         public PerformanceViewModel()
         {
-            perCoreCPUFrequencySeries = cpuPerfService.cores.Select((core, index) =>
+            perCoreCPUFrequencySeries = cpuPerfService.Cores.Select((core, index) =>
             {
                 return new CoreFrequencyData
                 {
@@ -98,7 +99,7 @@ namespace PowerTaskMan.ViewModels
             {
                 while (true)
                 {
-                    cpuPerfService.UpdateUtilizations();
+                    var new_data = cpuPerfService.UpdateCPUStats();
                     dq.TryEnqueue(() =>
                     {
                         UpdateCPUUtilizationChart();
@@ -130,7 +131,7 @@ namespace PowerTaskMan.ViewModels
         {
             while (!cpu_cts.IsCancellationRequested)
             {
-                cpuPerfService.UpdateFrequencies();
+                var data = cpuPerfService.UpdateCPUStats();
 
                 // Compute the average frequency across all cores
                 //int clock_speed_mhz = 0;
@@ -140,25 +141,25 @@ namespace PowerTaskMan.ViewModels
                 //}
                 //clock_speed_mhz /= cpuPerfService.cores.Count;
 
-                int clock_speed_mhz = (int)(cpuPerfService.cores[0].CoreFrequency / 1000 / 1000);
+                f32 avg_freq = data.Select(per_core => per_core.Frequency).Average();
+
+                int clock_speed_mhz = (int)(avg_freq / 1000 / 1000);
 
                 Debug.WriteLine("Current Clock Speed (MHz): " + clock_speed_mhz);
                 dq.TryEnqueue(() =>
                 {
                     UpdateCPUFrequencyChart(clock_speed_mhz);
-                    UpdatePerCoreCPUFrequencyChart();
+                    UpdatePerCoreCPUFrequencyChart(data);
                     CurrentFrequency = ((double)clock_speed_mhz / 1000).ToString() + " GHz";
                 });
                 Thread.Sleep(UpdateSpeedMilliseconds);
             }
         }
 
-        //public void StopCPUFreqMonitoring()
-        //{
-        //    cpu_freq.Cancel();
-        //}
-
-
+        public void StopCPUFreqMonitoring()
+        {
+            cpu_cts.Cancel();
+        }
 
         void UpdateMemoryChartData()
         {
@@ -178,13 +179,13 @@ namespace PowerTaskMan.ViewModels
             CurrentFrequency = new_clock_mhz.ToString() + " GHz";
         }
 
-        void UpdatePerCoreCPUFrequencyChart()
+        void UpdatePerCoreCPUFrequencyChart(List<StreamingCorePerfData> new_data)
         {
             foreach ((CoreFrequencyData coreData, int index) in PerCoreCPUFrequencySeries.Select((value, i) => (value, i)))
             {
                 var values = coreData.FrequencyData.Cast<CoordinatePair>().ToList();
                 values.RemoveAt(0);
-                var new_freq = cpuPerfService.cores[index].CoreFrequency;
+                var new_freq = new_data[index].Frequency;
                 new_freq = new_freq / 1000 / 1000;
                 values.Add(new CoordinatePair { X = 0, Y = new_freq});
                 PerCoreCPUFrequencySeries[index].FrequencyData = new List<ICoordinatePair>(values);
