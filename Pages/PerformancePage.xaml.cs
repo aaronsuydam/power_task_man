@@ -104,16 +104,16 @@ namespace power_task_man.Pages
         private void ItemsRepeater_ElementPrepared(ItemsRepeater sender, ItemsRepeaterElementPreparedEventArgs args)
         {
   
-            if (sender.TryGetElement(args.Index) is FrameworkElement element)
-            {
-                element.SetValue(AutomationProperties.NameProperty, $"Core {args.Index}");
-                var graph = element as GraphControlWin2D;
-                if (graph != null)
-                {
-                    graph.Title = $"Core {args.Index} Frequency (MHz)";
-                }
+            //if (sender.TryGetElement(args.Index) is FrameworkElement element)
+            //{
+            //    element.SetValue(AutomationProperties.NameProperty, $"Core {args.Index}");
+            //    var graph = element as GraphControlWin2D;
+            //    if (graph != null)
+            //    {
+            //        graph.Title = $"Core {args.Index} Frequency (MHz)";
+            //    }
             
-            }
+            //}
         }
     }
 }
