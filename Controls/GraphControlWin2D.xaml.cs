@@ -25,19 +25,8 @@ namespace PowerTaskMan.Controls
         public Color PointColor { get; set; } = Colors.Black;
         public bool ShowPoints { get; set; } = true;
         public bool ShowLines { get; set; } = true;
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-        public float PointRadius { get; set; } = 3.0f;
-    }
-
-
-    public class LineStyle
-    {
-        public Color LineColor { get; set; } = Colors.Black;
-        public float LineThickness { get; set; } = 2.0f;
-=======
         public double PointRadius { get; set; } = 3.0f;
         public double LineThickness { get; set; } = 2.0f;
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
     }
 
     public class GridStyle
@@ -251,21 +240,13 @@ namespace PowerTaskMan.Controls
             {
                 var (x1, y1) = coordinates[i];
                 var (x2, y2) = coordinates[i + 1];
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-                session.DrawLine(x1, y1, x2, y2, line_style.LineColor, line_style.LineThickness);
-=======
                 session.DrawLine(x1, y1, x2, y2, customization.LineColor, (float)customization.LineThickness);
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
             }
 
             // Draw all points
             foreach (var (x, y) in coordinates)
             {
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-                session.FillCircle(x, y, dp_style.PointRadius, dp_style.PointColor);
-=======
                 session.FillCircle(x, y, (float)customization.PointRadius, customization.PointColor);
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
             }
         }
 
@@ -275,11 +256,7 @@ namespace PowerTaskMan.Controls
             {
                 var (x1, y1) = coordinates[i];
                 var (x2, y2) = coordinates[i + 1];
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-                session.DrawLine(x1, y1, x2, y2, line_style.LineColor, line_style.LineThickness);
-=======
                 session.DrawLine(x1, y1, x2, y2, customization.LineColor, (float)customization.LineThickness);
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
             }
         }
 
@@ -406,17 +383,10 @@ namespace PowerTaskMan.Controls
             // Draw axes
             var width = (float)sender.ActualWidth;
             var height = (float)sender.ActualHeight;
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-            var margin = this.AxisCustomization.Margin;
-
-            // Calculate the graph's origin
-            float data_margin = AxisCustomization.Margin;
-=======
             var margin = (float)this.AxisCustomization.Margin;
 
             // Calculate the graph's origin
             float data_margin = margin;
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
             float origin_x = 0 + margin;
             float origin_y = 0 - margin + height;
 
@@ -454,11 +424,7 @@ namespace PowerTaskMan.Controls
                 var y1 = origin_y - scaled_data_points[i].Y;
                 var x2 = origin_x + scaled_data_points[i + 1].X;
                 var y2 = origin_y - scaled_data_points[i + 1].Y;
-<<<<<<< Updated upstream:Controls/GraphControlWin2D.xaml.cs
-                session.DrawLine(x1, y1, x2, y2, DataPointCustomization.PointColor, 2);
-=======
                 session.DrawLine(x1, y1, x2, y2, DataPointCustomization.LineColor, 2);
->>>>>>> Stashed changes:PowerTaskMan/Controls/GraphControlWin2D.xaml.cs
                 session.FillCircle(x1, y1, 3, DataPointCustomization.PointColor);
                 session.FillCircle(x2, y2, 3, DataPointCustomization.PointColor);
             }
