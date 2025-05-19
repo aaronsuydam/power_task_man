@@ -35,15 +35,15 @@ namespace power_task_man.Pages
             {
                 new CoordinatePair { X = 0, Y = 0 },
                 new CoordinatePair { X = 1, Y = 1 },
-                new CoordinatePair { X = 4, Y = 2 },
-                new CoordinatePair { X = 9, Y = 3 },
-                new CoordinatePair { X = 16, Y = 4 },
-                new CoordinatePair { X = 25, Y = 5 },
-                new CoordinatePair { X = 36, Y = 6 },
-                new CoordinatePair { X = 49, Y = 7 },
-                new CoordinatePair { X = 64, Y = 8 },
-                new CoordinatePair { X = 81, Y = 9 },
-                new CoordinatePair { X = 100, Y = 10 }
+                new CoordinatePair { X = 2, Y = 2 },
+                new CoordinatePair { X = 3, Y = 3 },
+                new CoordinatePair { X = 4, Y = 4 },
+                new CoordinatePair { X = 5, Y = 5 },
+                new CoordinatePair { X = 6, Y = 6 },
+                new CoordinatePair { X = 7, Y = 7 },
+                new CoordinatePair { X = 8, Y = 8 },
+                new CoordinatePair { X = 9, Y = 9 },
+                new CoordinatePair { X = 10, Y = 10 }
             };
         }
 

@@ -8,14 +8,18 @@
         <!-- if Colors.xaml is in the same Resources folder -->
         <ResourceDictionary Source="/Assets/Colors.xaml"/>
     </ResourceDictionary.MergedDictionaries>
-    <!-- Lawn Green -->
 
+
+    <SolidColorBrush x:Key="CPUBrush" Color="{StaticResource ColorBlueRaw}"/>
+    <SolidColorBrush x:Key="MemoryBrush" Color="{StaticResource ColorPurpleRaw}"/>
+    <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource ColorGreenRaw}"/>
+    <SolidColorBrush x:Key="DiskBrush" Color="{StaticResource ColorRedOrangeRaw}"/>
     <!-- CPU Styles -->
     <controls:AxisStyle    x:Key="CPU_AxisStyle"    Color="{StaticResource CPUBrush}"    Margin="0"/>
     <controls:DataPointStyle x:Key="CPU_DataPointStyle"
                           PointColor="{StaticResource CPUBrush}"
                           ShowLines="True"
-                          ShowPoints="True"
+                          ShowPoints="False"
                           PointRadius="1"/>
     <controls:LineStyle    x:Key="CPU_LineStyle"    LineColor="{StaticResource CPUBrush}"    LineThickness="1"/>
 
@@ -24,7 +28,7 @@
     <controls:DataPointStyle x:Key="Memory_DataPointStyle"
                           PointColor="{StaticResource MemoryBrush}"
                           ShowLines="True"
-                          ShowPoints="True"
+                          ShowPoints="False"
                           PointRadius="1"/>
     <controls:LineStyle    x:Key="Memory_LineStyle"    LineColor="{StaticResource MemoryBrush}"    LineThickness="1"/>
 
@@ -33,7 +37,7 @@
     <controls:DataPointStyle x:Key="GPU_DataPointStyle"
                           PointColor="{StaticResource GPUBrush}"
                           ShowLines="True"
-                          ShowPoints="True"
+                          ShowPoints="False"
                           PointRadius="1"/>
     <controls:LineStyle    x:Key="GPU_LineStyle"    LineColor="{StaticResource GPUBrush}"    LineThickness="1"/>
 

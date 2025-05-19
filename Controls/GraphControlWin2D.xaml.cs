@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.UI;
+using static System.Collections.Specialized.BitVector32;
 
 namespace PowerTaskMan.Controls
 {
@@ -22,7 +23,7 @@ namespace PowerTaskMan.Controls
 
     public class DataPointStyle
     {
-        public Color PointColor { get; set; } = Colors.Black;
+        public Brush PointColor { get; set; } = new SolidColorBrush(Colors.Black);
         public bool ShowPoints { get; set; } = true;
         public bool ShowLines { get; set; } = true;
         public double PointRadius { get; set; } = 3.0f;
@@ -34,17 +35,23 @@ namespace PowerTaskMan.Controls
         public Color LineColor { get; set; } = Colors.LightGray;
     }
 
+    public class LineStyle
+    {
+        public Brush LineColor { get; set; } = new SolidColorBrush(Colors.LightGray);
+        public double LineThickness { get; set; } = 1.0f;
+    }
+
     public static class DefaultStyles
     {
         public static AxisStyle axis = new AxisStyle
         {
             Color = Colors.Black,
-            Margin = 0
+            Margin = 10
         };
 
         public static DataPointStyle datapoint = new DataPointStyle
         {
-            PointColor = Colors.LightGray,
+            PointColor = new SolidColorBrush(Colors.LightGray),
             ShowLines = true,
             ShowPoints = true,
             PointRadius = 1.0f
@@ -52,7 +59,7 @@ namespace PowerTaskMan.Controls
 
         public static LineStyle line = new LineStyle
         {
-            LineColor = Colors.LightGray,
+            LineColor = new SolidColorBrush(Colors.LightGray),
             LineThickness = 1.0f,
         };
     }
@@ -149,8 +156,8 @@ namespace PowerTaskMan.Controls
                         refresh_request_cache.Clear();
                         DispatcherQueue.TryEnqueue(() =>
                         {
-                                _determine_data_range(); // Must be called before Canvas.Invalidate() to ensure the range has been updated
-                                Canvas.Invalidate();
+                            _determine_data_range(); // Must be called before Canvas.Invalidate() to ensure the range has been updated
+                            Canvas.Invalidate();
                         });
                     }
                 }
@@ -210,9 +217,9 @@ namespace PowerTaskMan.Controls
         // Member Methods
         // Drawing action delegates
         private delegate void DrawAction(
-            CanvasDrawingSession session, 
-            List<(float X, float Y)> coordinates, 
-            DataPointStyle customization, 
+            CanvasDrawingSession session,
+            IList<ICoordinatePair> coordinates,
+            DataPointStyle customization,
             LineStyle line_style
             );
 
@@ -230,45 +237,53 @@ namespace PowerTaskMan.Controls
         }
 
         // Specialized drawing methods with no branching in their hot paths
-        private static void DrawLinesAndPoints(CanvasDrawingSession session, 
-                                               List<(float X, float Y)> coordinates, 
+        private static void DrawLinesAndPoints(CanvasDrawingSession session,
+                                               IList<ICoordinatePair> coordinates,
                                                DataPointStyle dp_style,
                                                LineStyle line_style)
         {
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(session, line_style.LineColor);
+            var point_brush = Win2DHelpers.XamlBrushToICanvasBrush(session, dp_style.PointColor);
             // Draw all lines
             for (int i = 0; i < coordinates.Count - 1; i++)
             {
-                var (x1, y1) = coordinates[i];
-                var (x2, y2) = coordinates[i + 1];
-                session.DrawLine(x1, y1, x2, y2, customization.LineColor, (float)customization.LineThickness);
+                var x1 = coordinates[i].X;
+                var y1 = coordinates[i].Y;
+                var x2 = coordinates[i + 1].X;
+                var y2 = coordinates[i + 1].Y;
+                session.DrawLine(x1, y1, x2, y2, line_brush, (float)line_style.LineThickness);
             }
 
             // Draw all points
-            foreach (var (x, y) in coordinates)
+            foreach (ICoordinatePair cp in coordinates)
             {
-                session.FillCircle(x, y, (float)customization.PointRadius, customization.PointColor);
+                session.FillCircle(cp.X, cp.Y, (float)dp_style.PointRadius, point_brush);
             }
         }
 
-        private static void DrawLinesOnly(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle dp_style, LineStyle line_style)
+        private static void DrawLinesOnly(CanvasDrawingSession session, IList<ICoordinatePair> coordinates, DataPointStyle dp_style, LineStyle line_style)
         {
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(session, line_style.LineColor);
             for (int i = 0; i < coordinates.Count - 1; i++)
             {
-                var (x1, y1) = coordinates[i];
-                var (x2, y2) = coordinates[i + 1];
-                session.DrawLine(x1, y1, x2, y2, customization.LineColor, (float)customization.LineThickness);
+                var x1 = coordinates[i].X;
+                var y1 = coordinates[i].Y;
+                var x2 = coordinates[i + 1].X;
+                var y2 = coordinates[i + 1].Y;
+                session.DrawLine(x1, y1, x2, y2, line_brush, (float)line_style.LineThickness);
             }
         }
 
-        private static void DrawPointsOnly(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization, LineStyle line_style)
+        private static void DrawPointsOnly(CanvasDrawingSession session, IList<ICoordinatePair> coordinates, DataPointStyle customization, LineStyle line_style)
         {
-            foreach (var (x, y) in coordinates)
+            var point_brush = Win2DHelpers.XamlBrushToICanvasBrush(session, customization.PointColor);
+            foreach (ICoordinatePair cp in coordinates)
             {
-                session.FillCircle(x, y, (float)customization.PointRadius, customization.PointColor);
+                session.FillCircle(cp.X, cp.Y, (float)customization.PointRadius, point_brush);
             }
         }
 
-        private static void NoDrawAction(CanvasDrawingSession session, List<(float X, float Y)> coordinates, DataPointStyle customization, LineStyle line_style)
+        private static void NoDrawAction(CanvasDrawingSession session, IList<ICoordinatePair> coordinates, DataPointStyle customization, LineStyle line_style)
         {
             // Do nothing
         }
@@ -354,11 +369,11 @@ namespace PowerTaskMan.Controls
             min.Y = DataPoints.MinBy(DataPoints => DataPoints.Y).Y;
 
             // Calculate intervals for the gridlines, ensuring they are never 0;
-            if(max.X == min.X)
+            if (max.X == min.X)
             {
                 max.X += 1;
             }
-            if(min.Y == min.Y)
+            if (max.Y == min.Y)
             {
                 max.Y += 1;
             }
@@ -380,27 +395,38 @@ namespace PowerTaskMan.Controls
             if (xRange == 0 || yRange == 0)
                 return;
 
+            var textFormat = new CanvasTextFormat
+            {
+                FontSize = 12, // Set font size to 24 points
+                FontFamily = "Arial", // Optional: Set font family
+                HorizontalAlignment = CanvasHorizontalAlignment.Center,
+                VerticalAlignment = CanvasVerticalAlignment.Center
+            };
+
+            float width_of_y_labels = MeasureTextWidth(sender.Device, max_y.ToString(), textFormat);
+
+
+
             // Draw axes
             var width = (float)sender.ActualWidth;
             var height = (float)sender.ActualHeight;
-            var margin = (float)this.AxisCustomization.Margin;
-
+            var margin = (float)this.AxisCustomization.Margin + width_of_y_labels;
             // Calculate the graph's origin
-            float data_margin = margin;
             float origin_x = 0 + margin;
             float origin_y = 0 - margin + height;
+            CoordinatePair origin = new CoordinatePair { X = origin_x, Y = origin_y };
 
-    
+
 
             // If the height and or width of the canvas is more than an order of magnitude different from the data, define the scale
             // factor
-            (float x_scale, float y_scale) = DetermineScalingFactor(height, width, margin, data_margin);
+            (float x_scale, float y_scale) = DetermineScalingFactor(height, width, margin);
 
             float x_interval = DetermineAxisGridlineInterval(this.xRange);
             float y_interval = DetermineAxisGridlineInterval(this.yRange);
 
 
-            DrawAxesAndGridLines(sender, args, 
+            DrawAxesAndGridLines(sender, args,
                                  width, height,
                                  x_interval, y_interval,
                                  x_scale, y_scale,
@@ -416,19 +442,36 @@ namespace PowerTaskMan.Controls
             else
             {
                 scaled_data_points = DataPoints;
-            }           
+            }
 
+            // Translate data points to be relative to the origin.
+            IList<ICoordinatePair> to_draw = new List<ICoordinatePair>();
+            foreach (ICoordinatePair cp in scaled_data_points)
+            {
+                CoordinatePair drawable_point = new CoordinatePair
+                {
+                    X = origin_x + cp.X,
+                    Y = origin_y - cp.Y
+                };
+                to_draw.Add(drawable_point);
+            }
+
+            var linebrush = Win2DHelpers.XamlBrushToICanvasBrush(session, LineCustomization.LineColor);
+            var pointbrush = Win2DHelpers.XamlBrushToICanvasBrush(session, DataPointCustomization.PointColor);
             for (int i = 0; i < scaled_data_points.Count - 1; i++)
             {
                 var x1 = origin_x + scaled_data_points[i].X;
                 var y1 = origin_y - scaled_data_points[i].Y;
                 var x2 = origin_x + scaled_data_points[i + 1].X;
                 var y2 = origin_y - scaled_data_points[i + 1].Y;
-                session.DrawLine(x1, y1, x2, y2, DataPointCustomization.LineColor, 2);
-                session.FillCircle(x1, y1, 3, DataPointCustomization.PointColor);
-                session.FillCircle(x2, y2, 3, DataPointCustomization.PointColor);
+                session.DrawLine(x1, y1, x2, y2, linebrush, 2);
+                session.FillCircle(x1, y1, 3, pointbrush);
+                session.FillCircle(x2, y2, 3, pointbrush);
             }
-            
+
+            //DrawAction draw_action = GetDrawAction();
+            //draw_action(session, to_draw, this.DataPointCustomization, this.LineCustomization);
+
         }
 
         private List<ICoordinatePair> ScaleCoordinateData(IList<ICoordinatePair> data, float x_scale, float y_scale)
@@ -437,7 +480,7 @@ namespace PowerTaskMan.Controls
             foreach (var point in data)
             {
                 var newX = point.X * x_scale;
-                var newY = point.Y* y_scale;
+                var newY = point.Y * y_scale;
                 var new_coord_pair = new CoordinatePair { X = newX, Y = newY };
                 new_data.Add(new_coord_pair);
             }
@@ -454,6 +497,8 @@ namespace PowerTaskMan.Controls
                 var new_coord_pair = new CoordinatePair { X = newX, Y = newY };
                 new_data.Add(new_coord_pair);
             }
+
+
             return new_data;
         }
 
@@ -476,19 +521,27 @@ namespace PowerTaskMan.Controls
                                         float xMin, float yMin,
                                         float margin)
         {
-            CoordinatePair x_axis_start = new CoordinatePair { X = margin, Y = height - margin };
-            CoordinatePair x_axis_end = new CoordinatePair { X = width - margin, Y = height - margin };
-            CoordinatePair y_axis_start = new CoordinatePair { X = margin, Y = margin };
-            CoordinatePair y_axis_end = new CoordinatePair { X = margin, Y = height - margin };
+            float left = margin;
+            float right = width - margin;
+            float top = margin;
+            float bottom = height - margin;
 
-            args.DrawingSession.DrawLine(x_axis_start.X, x_axis_start.Y, x_axis_end.X, x_axis_end.Y, AxisCustomization.Color, 2);
-            args.DrawingSession.DrawLine(y_axis_start.X, y_axis_start.Y, y_axis_end.X, y_axis_end.Y, AxisCustomization.Color, 2);
+            CoordinatePair origin = new CoordinatePair { X = left, Y = bottom };
+            CoordinatePair x_axis_end = new CoordinatePair { X = right, Y = bottom };
+            CoordinatePair y_axis_end = new CoordinatePair { X = left, Y = top };
 
-            float width_for_gl = width - (1 * margin);
-            float height_for_gl = height;
+            args.DrawingSession.DrawLine(
+                origin.X, origin.Y,
+                x_axis_end.X, x_axis_end.Y,
+                AxisCustomization.Color, 2);
 
-            float x_gridlines_graphics_interval = xIntervalDataUnits * xScale;
-            float y_gridlines_graphics_interval = yIntervalDataUnits * yScale;
+            args.DrawingSession.DrawLine(
+                origin.X, origin.Y,
+                y_axis_end.X, y_axis_end.Y,
+                AxisCustomization.Color, 2);
+
+            float x_step = xIntervalDataUnits * xScale;
+            float y_step = yIntervalDataUnits * yScale;
 
             var textFormat = new CanvasTextFormat
             {
@@ -500,24 +553,29 @@ namespace PowerTaskMan.Controls
 
 
             // Draw vertical gridlines.
-            float gridline_counter = 0;
-            for (float i = margin; i < width_for_gl; i += x_gridlines_graphics_interval)
+            int v_gl_count = (int)Math.Floor((right - left) / x_step);
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.LineCustomization.LineColor);
+
+            for (int i = 1; i < v_gl_count + 1; i++)
             {
-                args.DrawingSession.DrawLine(i, height_for_gl - 1, i, margin, GridCustomization.LineColor);
-                float dataValue = xMin + (gridline_counter * xIntervalDataUnits);
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), i, height_for_gl - 10, _text_brush.Color, textFormat);
-                gridline_counter++;
+                float x = left + i * x_step;
+                args.DrawingSession.DrawLine(x, bottom, x, top, line_brush);
+
+                float dataValue = xMin + (i * xIntervalDataUnits);
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), x, bottom + (margin / 2), _text_brush.Color, textFormat);
             }
 
-            gridline_counter = 0;
-
             // Draw horizontal gridlines.
-            for (float i = y_axis_end.Y; i > margin; i -= y_gridlines_graphics_interval)
+            int h_gl_count = (int)Math.Floor((bottom - top) / y_step);
+            var point_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.LineCustomization.LineColor);
+            for (int i = 1; i < h_gl_count + 1; i++)
             {
-                args.DrawingSession.DrawLine(margin + 1, i, width_for_gl, i, GridCustomization.LineColor);
-                float dataValue = yMin + (gridline_counter * yIntervalDataUnits); // yMax at the top, yMin at the bottom
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), margin - 5, i, _text_brush.Color, textFormat);
-                gridline_counter++;
+                float y = bottom - i * y_step;
+                args.DrawingSession.DrawLine(left, y, right, y, GridCustomization.LineColor);
+
+                float dataValue = yMin + (i * yIntervalDataUnits); // yMax at the top, yMin at the bottom
+                args.DrawingSession.DrawText(dataValue.ToString("F0"), left - (margin / 2), y, _text_brush.Color, textFormat);
+
             }
         }
 
@@ -527,7 +585,7 @@ namespace PowerTaskMan.Controls
         /// <param name="data_range"></param>
         /// <returns></returns>
         float DetermineAxisGridlineInterval(float data_range, float more_or_less_gridlines = 1)
-        { 
+        {
             // 1. Calculate power of 10
             double nearest_power_ten = Math.Floor(Math.Log10(data_range));
             double next_lowest_power_ten = nearest_power_ten - 1;
@@ -565,12 +623,12 @@ namespace PowerTaskMan.Controls
         /// <param name="margin"></param>
         /// <param name="data_margin"></param>
         /// <returns>xScale, yScale</returns>
-        private (float, float) DetermineScalingFactor(float height, float width, float margin, float data_margin)
+        private (float, float) DetermineScalingFactor(float height, float width, float margin)
         {
             float x_scale = 1;
             float y_scale = 1;
-            float effective_width = width - (2 * (margin + data_margin)); // Accounts for the margin
-            float effective_height = height - (2 * (margin + data_margin)); // Accounts for the margin
+            float effective_width = width - (2 * margin); // Accounts for the margin
+            float effective_height = height - (2 * margin); // Accounts for the margin
 
             if (xRange != effective_width)
             {
@@ -589,6 +647,11 @@ namespace PowerTaskMan.Controls
             }
 
             return (x_scale, y_scale);
+        }
+        private float MeasureTextWidth(CanvasDevice device, string text, CanvasTextFormat fmt)
+        {
+            using var layout = new CanvasTextLayout(device, text, fmt, 1000, 1000);
+            return (float)layout.DrawBounds.Width;
         }
     }
 }

@@ -46,7 +46,7 @@
           Grid.Row="1" Grid.Column="0"
           Title="CPU Frequency (MHz)"
           DataLabel              ="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
-          DataPointCustomization ="{x:Bind controls:DefaultStyles.datapoint}"
+          DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
           LineCustomization              ="{x:Bind controls:DefaultStyles.line}"
           AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
           DataPoints             ="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
