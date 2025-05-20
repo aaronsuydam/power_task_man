@@ -124,6 +124,13 @@ namespace PowerTaskMan.Controls
           new PropertyMetadata(new LineStyle(), OnLineCustomizationPropertyChanged)
         );
 
+        public static readonly DependencyProperty GridlineCustomizationProperty = DependencyProperty.Register(
+            nameof(GridCustomization),
+            typeof(LineStyle),
+            typeof(GraphControlWin2D),
+            new PropertyMetadata(new LineStyle(), OnGridCustomizationPropertyChanged)
+        );
+
         // Member Variables
         private IList<bool> refresh_request_cache = new List<bool>();
         private float xRange;
@@ -135,9 +142,9 @@ namespace PowerTaskMan.Controls
         private IList<ICoordinatePair> _dataPoints;
         private IList<ICoordinatePair> scaled_data_points;
         private bool notinit = true;
-        private SolidColorBrush _background_brush = (SolidColorBrush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+        private SolidColorBrush _background_brush = new SolidColorBrush(Colors.Transparent);
         private SolidColorBrush _text_brush = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
-
+        private SolidColorBrush _gridline_brush = new SolidColorBrush(Colors.LightGray);
         // Constructor
         public GraphControlWin2D()
         {
@@ -458,19 +465,19 @@ namespace PowerTaskMan.Controls
 
             var linebrush = Win2DHelpers.XamlBrushToICanvasBrush(session, LineCustomization.LineColor);
             var pointbrush = Win2DHelpers.XamlBrushToICanvasBrush(session, DataPointCustomization.PointColor);
-            for (int i = 0; i < scaled_data_points.Count - 1; i++)
-            {
-                var x1 = origin_x + scaled_data_points[i].X;
-                var y1 = origin_y - scaled_data_points[i].Y;
-                var x2 = origin_x + scaled_data_points[i + 1].X;
-                var y2 = origin_y - scaled_data_points[i + 1].Y;
-                session.DrawLine(x1, y1, x2, y2, linebrush, 2);
-                session.FillCircle(x1, y1, 3, pointbrush);
-                session.FillCircle(x2, y2, 3, pointbrush);
-            }
+            //for (int i = 0; i < scaled_data_points.Count - 1; i++)
+            //{
+            //    var x1 = origin_x + scaled_data_points[i].X;
+            //    var y1 = origin_y - scaled_data_points[i].Y;
+            //    var x2 = origin_x + scaled_data_points[i + 1].X;
+            //    var y2 = origin_y - scaled_data_points[i + 1].Y;
+            //    session.DrawLine(x1, y1, x2, y2, linebrush, 2);
+            //    session.FillCircle(x1, y1, 3, pointbrush);
+            //    session.FillCircle(x2, y2, 3, pointbrush);
+            //}
 
-            //DrawAction draw_action = GetDrawAction();
-            //draw_action(session, to_draw, this.DataPointCustomization, this.LineCustomization);
+            DrawAction draw_action = GetDrawAction();
+            draw_action(session, to_draw, this.DataPointCustomization, this.LineCustomization);
 
         }
 
@@ -530,16 +537,6 @@ namespace PowerTaskMan.Controls
             CoordinatePair x_axis_end = new CoordinatePair { X = right, Y = bottom };
             CoordinatePair y_axis_end = new CoordinatePair { X = left, Y = top };
 
-            args.DrawingSession.DrawLine(
-                origin.X, origin.Y,
-                x_axis_end.X, x_axis_end.Y,
-                AxisCustomization.Color, 2);
-
-            args.DrawingSession.DrawLine(
-                origin.X, origin.Y,
-                y_axis_end.X, y_axis_end.Y,
-                AxisCustomization.Color, 2);
-
             float x_step = xIntervalDataUnits * xScale;
             float y_step = yIntervalDataUnits * yScale;
 
@@ -554,7 +551,7 @@ namespace PowerTaskMan.Controls
 
             // Draw vertical gridlines.
             int v_gl_count = (int)Math.Floor((right - left) / x_step);
-            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.LineCustomization.LineColor);
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this._gridline_brush);
 
             for (int i = 1; i < v_gl_count + 1; i++)
             {
@@ -567,16 +564,25 @@ namespace PowerTaskMan.Controls
 
             // Draw horizontal gridlines.
             int h_gl_count = (int)Math.Floor((bottom - top) / y_step);
-            var point_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.LineCustomization.LineColor);
             for (int i = 1; i < h_gl_count + 1; i++)
             {
                 float y = bottom - i * y_step;
-                args.DrawingSession.DrawLine(left, y, right, y, GridCustomization.LineColor);
+                args.DrawingSession.DrawLine(left, y, right, y, line_brush);
 
                 float dataValue = yMin + (i * yIntervalDataUnits); // yMax at the top, yMin at the bottom
                 args.DrawingSession.DrawText(dataValue.ToString("F0"), left - (margin / 2), y, _text_brush.Color, textFormat);
 
             }
+
+            args.DrawingSession.DrawLine(
+                origin.X, origin.Y,
+                x_axis_end.X, x_axis_end.Y,
+                AxisCustomization.Color, 2);
+
+            args.DrawingSession.DrawLine(
+                origin.X, origin.Y,
+                y_axis_end.X, y_axis_end.Y,
+                AxisCustomization.Color, 2);
         }
 
         /// <summary>

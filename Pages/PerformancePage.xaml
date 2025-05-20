@@ -8,7 +8,7 @@
     xmlns:controls="using:PowerTaskMan.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Background="{StaticResource PerformancePageBackground}"
     mc:Ignorable="d">
 
     <ScrollView>
@@ -35,8 +35,8 @@
           Grid.Row="1" Grid.Column="1"
           Title="Memory Use (%)"
           DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-          DataPointCustomization="{x:Bind controls:DefaultStyles.datapoint}"
-          LineCustomization              ="{x:Bind controls:DefaultStyles.line}"
+          DataPointCustomization="{StaticResource Memory_DataPointStyle}"
+          LineCustomization              ="{StaticResource Memory_LineStyle}"
           AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
           DataPoints             ="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
           UseIndexBasedGraphing  ="True" />
@@ -47,7 +47,7 @@
           Title="CPU Frequency (MHz)"
           DataLabel              ="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
           DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
-          LineCustomization              ="{x:Bind controls:DefaultStyles.line}"
+          LineCustomization              ="{StaticResource CPU_LineStyle}"
           AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
           DataPoints             ="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
           UseIndexBasedGraphing  ="True" />
@@ -69,8 +69,8 @@
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="services:CoreFrequencyData">
                         <controls:GraphControlWin2D
-                DataPointCustomization ="{x:Bind controls:DefaultStyles.datapoint}"
-                LineCustomization              ="{x:Bind controls:DefaultStyles.line}"
+                DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
+                LineCustomization              ="{StaticResource CPU_LineStyle}"
                 AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
                 DataPoints             ="{x:Bind FrequencyData, Mode=OneWay}"
                 UseIndexBasedGraphing  ="True" />

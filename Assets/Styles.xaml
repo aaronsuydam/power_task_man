@@ -28,9 +28,10 @@
     <controls:DataPointStyle x:Key="Memory_DataPointStyle"
                           PointColor="{StaticResource MemoryBrush}"
                           ShowLines="True"
-                          ShowPoints="False"
-                          PointRadius="1"/>
+                          ShowPoints="True"
+                          PointRadius="3"/>
     <controls:LineStyle    x:Key="Memory_LineStyle"    LineColor="{StaticResource MemoryBrush}"    LineThickness="1"/>
+    <controls:LineStyle     x:Key="GridlineStyle" LineColor="Gray" LineThickness="1" />
 
     <!-- GPU Styles -->
     <controls:AxisStyle    x:Key="GPU_AxisStyle"    Color="{StaticResource GPUBrush}"    Margin="0"/>
@@ -41,4 +42,15 @@
                           PointRadius="1"/>
     <controls:LineStyle    x:Key="GPU_LineStyle"    LineColor="{StaticResource GPUBrush}"    LineThickness="1"/>
 
+    <!-- A vertical gradient that sweeps through your key metric colors -->
+    <LinearGradientBrush x:Key="PerformancePageBackground"
+                     StartPoint="0,0" EndPoint="0,1"
+                     Opacity="0.4">
+        <GradientStop Offset="0.00" Color="{StaticResource ColorRedRaw}" />
+        <GradientStop Offset="0.20" Color="{StaticResource ColorYellowRaw}" />
+        <GradientStop Offset="0.40" Color="{StaticResource ColorGreenRaw}" />
+        <GradientStop Offset="0.60" Color="{StaticResource ColorSkyBlueRaw}" />
+        <GradientStop Offset="0.80" Color="{StaticResource ColorBlueRaw}" />
+        <GradientStop Offset="1.00" Color="{StaticResource ColorPurpleRaw}" />
+    </LinearGradientBrush>
 </ResourceDictionary>

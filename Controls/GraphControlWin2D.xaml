@@ -9,10 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:numerics="using:System.Numerics"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <Converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
+        <media:AcrylicBrush x:Key="GraphBackground" TintColor="Transparent" TintOpacity="0.9" FallbackColor="LightGray"/>
     </UserControl.Resources>
 
     <Border
@@ -22,6 +24,7 @@
         Height="250"
         BorderBrush="DarkGray"
         BorderThickness="1"
+        Background="{StaticResource GraphBackground}"
         CornerRadius="5">
 
         <Grid x:Name="GraphControlMainGrid">
