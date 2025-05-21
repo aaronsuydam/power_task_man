@@ -45,7 +45,7 @@
     <!-- A vertical gradient that sweeps through your key metric colors -->
     <LinearGradientBrush x:Key="PerformancePageBackground"
                      StartPoint="0,0" EndPoint="0,1"
-                     Opacity="0.4">
+                     Opacity="1">
         <GradientStop Offset="0.00" Color="{StaticResource ColorRedRaw}" />
         <GradientStop Offset="0.20" Color="{StaticResource ColorYellowRaw}" />
         <GradientStop Offset="0.40" Color="{StaticResource ColorGreenRaw}" />

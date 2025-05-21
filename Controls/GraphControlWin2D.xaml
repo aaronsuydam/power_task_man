@@ -14,7 +14,7 @@
 
     <UserControl.Resources>
         <Converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
-        <media:AcrylicBrush x:Key="GraphBackground" TintColor="Transparent" TintOpacity="0.9" FallbackColor="LightGray"/>
+        <media:AcrylicBrush x:Key="GraphBackground" TintColor="Transparent" TintOpacity="1" FallbackColor="LightGray"/>
     </UserControl.Resources>
 
     <Border

@@ -151,7 +151,7 @@ namespace PowerTaskMan.Controls
             this.InitializeComponent();
             GraphControlBorderXamlRef.Translation = new System.Numerics.Vector3(0, 0, 16);
             GraphControlBorderXamlRef.Shadow = new ThemeShadow();
-            GraphControlBorderXamlRef.Background = _background_brush;
+            //GraphControlBorderXamlRef.Background = _background_brush;
 
             Task.Run(() =>
             {
