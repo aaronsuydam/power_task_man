@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using PowerTaskMan.Controls;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -27,5 +28,12 @@ namespace power_task_man.Pages
         {
             this.InitializeComponent();
         }
+
+        public List<Metric> Metrics = [
+            new Metric { Name = "CPU", Value = "0.0", Unit = "%" },
+            new Metric { Name = "Memory", Value = "0.0", Unit = "MB" },
+            new Metric { Name = "Disk", Value = "0.0", Unit = "%" },
+            new Metric { Name = "Network", Value = "0.0", Unit = "KB/s" }
+        ];
     }
 }

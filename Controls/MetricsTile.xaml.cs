@@ -45,6 +45,22 @@ namespace PowerTaskMan.Controls
                 typeof(HorizontalAlignment),
                 typeof(MetricsTile),
                 new PropertyMetadata(HorizontalAlignment.Stretch));
-    
+
+        public IList<Metric> SecondaryMetrics
+        {
+            get => (IList<Metric>)GetValue(SecondaryMetricsProperty);
+            set => SetValue(SecondaryMetricsProperty, value);
+        }
+
+        public static readonly DependencyProperty SecondaryMetricsProperty =
+            DependencyProperty.Register(
+                nameof(SecondaryMetrics),
+                typeof(IList<Metric>),
+                typeof(MetricsTile),
+                new PropertyMetadata(new List<Metric>(), null)
+                );
+        
+         
+
     }
 }

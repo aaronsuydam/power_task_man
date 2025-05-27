@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PowerTaskMan.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="MetricsTileInstance"
     mc:Ignorable="d">
 
     <Border
@@ -13,7 +14,7 @@
         BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
         BorderThickness="0.5"
         CornerRadius="5">
-        <Grid Padding="10,0,0,0">
+        <Grid Padding="10,0,10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
@@ -27,14 +28,16 @@
             <TextBlock
                 Grid.Row="0"
                 Grid.ColumnSpan="2"
-                Grid.mn="0"
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="ThistileTitle!" />
 
-            <ItemsRepeater>
+            <ItemsRepeater
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                ItemsSource="{x:Bind SecondaryMetrics}">
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="local:Metric">
-                        <StackPanel HorizontalAlignment="Left" Orientation="Vertical">
+                        <StackPanel HorizontalAlignment="{Binding SecondaryMetricsTextAlignment, ElementName=MetricsTileInstance, Mode=OneWay}" Orientation="Vertical">
                             <TextBlock
                                 x:Name="PrimaryMetricName"
                                 Style="{StaticResource BodyStrongTextBlockStyle}"
@@ -47,6 +50,9 @@
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
 
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout Orientation="Horizontal" MinItemWidth="100" ItemsJustification="SpaceEvenly"/>
+                </ItemsRepeater.Layout>
             </ItemsRepeater>
         </Grid>
     </Border>

@@ -5,12 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:power_task_man.Pages"
     xmlns:controls="using:PowerTaskMan.Controls"
+    xmlns:List="using:System.Collections.Generic"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     >
 
     <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <controls:MetricsTile Width="500" Height="500" SecondaryMetricsTextAlignment="Left"></controls:MetricsTile>
+        <controls:MetricsTile Width="500" Height="500" SecondaryMetricsTextAlignment="Left" SecondaryMetrics="{x:Bind Metrics}"/>
+        
     </Grid>
 </Page>
