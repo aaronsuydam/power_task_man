@@ -29,6 +29,7 @@
     <None Remove="Assets\Styles.xaml" />
     <None Remove="Controls\GraphControlResource.xaml" />
     <None Remove="Controls\GraphControlWin2D.xaml" />
+    <None Remove="Controls\MetricsTile.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +62,11 @@
   -->
   <ItemGroup Condition="'$(DisableMsixProjectCapabilityAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <ProjectCapability Include="Msix" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="Controls\MetricsTile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Page Update="Assets\Styles.xaml">

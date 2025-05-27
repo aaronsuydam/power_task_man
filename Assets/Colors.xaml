@@ -1,68 +1,84 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!--  Define raw colors from the brushes  -->
-    <Color x:Key="ColorRedRaw">         #FF0000</Color>
-    <Color x:Key="ColorRedOrangeRaw">   #FF8C28</Color>
-    <Color x:Key="ColorOrangeRaw">      #FFA500</Color>
-    <Color x:Key="ColorYellowRaw">      #FFDD33</Color>
-    <Color x:Key="ColorGreenRaw">       #47E560</Color>
-    <Color x:Key="ColorSkyBlueRaw">     #58F2FC</Color>
-    <Color x:Key="ColorBlueRaw">        #35A6FB</Color>
-    <Color x:Key="ColorMagentaRaw">     #E52FF4</Color>
-    <Color x:Key="ColorPurpleRaw">      #A525F5</Color>
-    <Color x:Key="ColorGrayRaw">        #4D4D4D</Color>
+    <Color x:Key="ColorRedRaw">#FF0000</Color>
+    <Color x:Key="ColorRedOrangeRaw">#FF8C28</Color>
+    <Color x:Key="ColorOrangeRaw">#FFA500</Color>
+    <Color x:Key="ColorYellowRaw">#FFDD33</Color>
+    <Color x:Key="ColorGreenRaw">#47E560</Color>
+    <Color x:Key="ColorSkyBlueRaw">#58F2FC</Color>
+    <Color x:Key="ColorBlueRaw">#35A6FB</Color>
+    <Color x:Key="ColorMagentaRaw">#E52FF4</Color>
+    <Color x:Key="ColorPurpleRaw">#A525F5</Color>
+    <Color x:Key="ColorGrayRaw">#4D4D4D</Color>
 
     <!--  Define brushes for the colors  -->
-    <SolidColorBrush x:Key="ColorRedBrush"         Color="{StaticResource ColorRedRaw}" />
-    <SolidColorBrush x:Key="ColorRedOrangeBrush"   Color="{StaticResource ColorRedOrangeRaw}" />
-    <SolidColorBrush x:Key="ColorOrangeBrush"      Color="{StaticResource ColorOrangeRaw}" />
-    <SolidColorBrush x:Key="ColorYellowBrush"      Color="{StaticResource ColorYellowRaw}" />
-    <SolidColorBrush x:Key="ColorGreenBrush"       Color="{StaticResource ColorGreenRaw}" />
-    <SolidColorBrush x:Key="ColorSkyBlueBrush"     Color="{StaticResource ColorSkyBlueRaw}" />
-    <SolidColorBrush x:Key="ColorBlueBrush"        Color="{StaticResource ColorBlueRaw}" />
-    <SolidColorBrush x:Key="ColorMagentaBrush"     Color="{StaticResource ColorMagentaRaw}" />
-    <SolidColorBrush x:Key="ColorPurpleBrush"      Color="{StaticResource ColorPurpleRaw}" />
-    <SolidColorBrush x:Key="ColorGrayBrush"        Color="{StaticResource ColorGrayRaw}" />
+    <SolidColorBrush x:Key="ColorRedBrush" Color="{StaticResource ColorRedRaw}" />
+    <SolidColorBrush x:Key="ColorRedOrangeBrush" Color="{StaticResource ColorRedOrangeRaw}" />
+    <SolidColorBrush x:Key="ColorOrangeBrush" Color="{StaticResource ColorOrangeRaw}" />
+    <SolidColorBrush x:Key="ColorYellowBrush" Color="{StaticResource ColorYellowRaw}" />
+    <SolidColorBrush x:Key="ColorGreenBrush" Color="{StaticResource ColorGreenRaw}" />
+    <SolidColorBrush x:Key="ColorSkyBlueBrush" Color="{StaticResource ColorSkyBlueRaw}" />
+    <SolidColorBrush x:Key="ColorBlueBrush" Color="{StaticResource ColorBlueRaw}" />
+    <SolidColorBrush x:Key="ColorMagentaBrush" Color="{StaticResource ColorMagentaRaw}" />
+    <SolidColorBrush x:Key="ColorPurpleBrush" Color="{StaticResource ColorPurpleRaw}" />
+    <SolidColorBrush x:Key="ColorGrayBrush" Color="{StaticResource ColorGrayRaw}" />
 
-    <!-- Light / Dark mode backgrounds -->
-    <SolidColorBrush x:Key="BackgroundLightBrush"    Color="#FFFFFFFF"/>
-    <SolidColorBrush x:Key="BackgroundDarkBrush"     Color="#FF121212"/>
-    <SolidColorBrush x:Key="SurfaceLightBrush"       Color="#FFF0F0F0"/>
-    <SolidColorBrush x:Key="SurfaceDarkBrush"        Color="#FF1E1E1E"/>
-    <SolidColorBrush x:Key="OnBackgroundLightBrush"  Color="#FF212121"/>
-    <SolidColorBrush x:Key="OnBackgroundDarkBrush"   Color="#FFE0E0E0"/>
-    <SolidColorBrush x:Key="OnSurfaceLightBrush"     Color="#FF212121"/>
-    <SolidColorBrush x:Key="OnSurfaceDarkBrush"      Color="#FFE0E0E0"/>
+    <!--  Light / Dark mode backgrounds  -->
+    <SolidColorBrush x:Key="BackgroundLightBrush" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="BackgroundDarkBrush" Color="#FF121212" />
+    <SolidColorBrush x:Key="SurfaceLightBrush" Color="#FFF0F0F0" />
+    <SolidColorBrush x:Key="SurfaceDarkBrush" Color="#FF1E1E1E" />
+    <SolidColorBrush x:Key="OnBackgroundLightBrush" Color="#FF212121" />
+    <SolidColorBrush x:Key="OnBackgroundDarkBrush" Color="#FFE0E0E0" />
+    <SolidColorBrush x:Key="OnSurfaceLightBrush" Color="#FF212121" />
+    <SolidColorBrush x:Key="OnSurfaceDarkBrush" Color="#FFE0E0E0" />
 
-    <!-- Light / Dark semantic/status -->
-    <SolidColorBrush x:Key="ErrorLightBrush"         Color="{StaticResource ColorRedRaw}"/>
-    <SolidColorBrush x:Key="ErrorDarkBrush"          Color="#FFEF9A9A"/>
-    <SolidColorBrush x:Key="WarningLightBrush"       Color="{StaticResource ColorRedOrangeRaw}"/>
-    <SolidColorBrush x:Key="WarningDarkBrush"        Color="#FFFFE082"/>
-    <SolidColorBrush x:Key="SuccessLightBrush"       Color="#388E3C"/>
-    <SolidColorBrush x:Key="SuccessDarkBrush"        Color="#FFA5D6A7"/>
-    <SolidColorBrush x:Key="InfoLightBrush"          Color="#0288D1"/>
-    <SolidColorBrush x:Key="InfoDarkBrush"           Color="#FF81D4FA"/>
+    <!--  Light / Dark semantic/status  -->
+    <SolidColorBrush x:Key="ErrorLightBrush" Color="{StaticResource ColorRedRaw}" />
+    <SolidColorBrush x:Key="ErrorDarkBrush" Color="#FFEF9A9A" />
+    <SolidColorBrush x:Key="WarningLightBrush" Color="{StaticResource ColorRedOrangeRaw}" />
+    <SolidColorBrush x:Key="WarningDarkBrush" Color="#FFFFE082" />
+    <SolidColorBrush x:Key="SuccessLightBrush" Color="#388E3C" />
+    <SolidColorBrush x:Key="SuccessDarkBrush" Color="#FFA5D6A7" />
+    <SolidColorBrush x:Key="InfoLightBrush" Color="#0288D1" />
+    <SolidColorBrush x:Key="InfoDarkBrush" Color="#FF81D4FA" />
 
-    <!-- Divider / Border -->
-    <SolidColorBrush x:Key="DividerLightBrush"       Color="#FFBDBDBD"/>
-    <SolidColorBrush x:Key="DividerDarkBrush"        Color="#FF424242"/>
+    <!--  Divider / Border  -->
+    <SolidColorBrush x:Key="DividerLightBrush" Color="#FFBDBDBD" />
+    <SolidColorBrush x:Key="DividerDarkBrush" Color="#FF424242" />
 
-    <!-- Disabled / Interactable states -->
-    <SolidColorBrush x:Key="ControlDisabledLightBrush" Color="#FFBDBDBD"/>
-    <SolidColorBrush x:Key="ControlDisabledDarkBrush"  Color="#FF757575"/>
+    <!--  Disabled / Interactable states  -->
+    <SolidColorBrush x:Key="ControlDisabledLightBrush" Color="#FFBDBDBD" />
+    <SolidColorBrush x:Key="ControlDisabledDarkBrush" Color="#FF757575" />
 
-    <!-- Hover / Pressed / Focus (using BrandPrimaryBrush) -->
-    <SolidColorBrush x:Key="HoverBrush"              Color="{StaticResource BrandPrimaryBrush}" Opacity="0.08"/>
-    <SolidColorBrush x:Key="PressedBrush"            Color="{StaticResource BrandPrimaryBrush}" Opacity="0.16"/>
-    <SolidColorBrush x:Key="FocusBrush"              Color="{StaticResource BrandPrimaryBrush}" Opacity="0.24"/>
+    <!--  Hover / Pressed / Focus (using BrandPrimaryBrush)  -->
+    <SolidColorBrush
+        x:Key="HoverBrush"
+        Opacity="0.08"
+        Color="{StaticResource BrandPrimaryBrush}" />
+    <SolidColorBrush
+        x:Key="PressedBrush"
+        Opacity="0.16"
+        Color="{StaticResource BrandPrimaryBrush}" />
+    <SolidColorBrush
+        x:Key="FocusBrush"
+        Opacity="0.24"
+        Color="{StaticResource BrandPrimaryBrush}" />
 
-    <!-- Opacity variants for overlays -->
-    <SolidColorBrush x:Key="OverlayHighBrush"        Color="{StaticResource BrandPrimaryBrush}" Opacity="0.50"/>
-    <SolidColorBrush x:Key="OverlayMediumBrush"      Color="{StaticResource BrandPrimaryBrush}" Opacity="0.25"/>
-    <SolidColorBrush x:Key="DisabledOverlayBrush"    Color="#000000" Opacity="0.12"/>
+    <!--  Opacity variants for overlays  -->
+    <SolidColorBrush
+        x:Key="OverlayHighBrush"
+        Opacity="0.50"
+        Color="{StaticResource BrandPrimaryBrush}" />
+    <SolidColorBrush
+        x:Key="OverlayMediumBrush"
+        Opacity="0.25"
+        Color="{StaticResource BrandPrimaryBrush}" />
+    <SolidColorBrush
+        x:Key="DisabledOverlayBrush"
+        Opacity="0.12"
+        Color="#000000" />
 
 </ResourceDictionary>

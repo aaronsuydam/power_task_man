@@ -10,10 +10,13 @@
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="Base" />
-        <!--  Use a more immersive mica kind.  -->
     </Window.SystemBackdrop>
 
     <NavigationView SelectionChanged="NavigationView_SelectionChanged">
+        <NavigationView.Resources>
+            <SolidColorBrush x:Key="NavigationViewContentBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="NavigationViewContentGridBorderBrush" Color="Transparent" />
+        </NavigationView.Resources>
         <NavigationView.MenuItems>
             <NavigationViewItem
                 Content="Home"
@@ -23,6 +26,10 @@
                 Content="Performance"
                 Icon="Volume"
                 Tag="PerformancePage" />
+            <NavigationViewItem
+                Content="Processes"
+                Icon="Accept"
+                Tag="ProcessesPage" />
         </NavigationView.MenuItems>
         <Frame x:Name="mainNVContentFrame" />
     </NavigationView>

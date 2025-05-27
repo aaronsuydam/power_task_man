@@ -7,14 +7,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PowerTaskMan.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:media="using:Microsoft.UI.Xaml.Media"
     xmlns:numerics="using:System.Numerics"
     xmlns:win2d="using:Microsoft.Graphics.Canvas.UI.Xaml"
-    xmlns:media="using:Microsoft.UI.Xaml.Media"
     mc:Ignorable="d">
 
     <UserControl.Resources>
         <Converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
-        <media:AcrylicBrush x:Key="GraphBackground" TintColor="Transparent" TintOpacity="1" FallbackColor="LightGray"/>
+        <media:AcrylicBrush
+            x:Key="GraphBackground"
+            FallbackColor="LightGray"
+            TintColor="Transparent"
+            TintOpacity="1" />
     </UserControl.Resources>
 
     <Border
@@ -22,9 +26,9 @@
         Grid.Row="1"
         Grid.Column="0"
         Height="250"
+        Background="{StaticResource GraphBackground}"
         BorderBrush="DarkGray"
         BorderThickness="1"
-        Background="{StaticResource GraphBackground}"
         CornerRadius="5">
 
         <Grid x:Name="GraphControlMainGrid">

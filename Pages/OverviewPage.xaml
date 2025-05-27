@@ -6,16 +6,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PowerTaskMan.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+  
     mc:Ignorable="d">
 
     <Grid>
-        <local:GraphControlWin2D
-            x:Name="GraphControl1"
-            Width="200"
-            Height="500"
-            DataPoints="{x:Bind DataPoints, Mode=OneWay}"
-            UseIndexBasedGraphing="True" />
+        <ScrollView x:Name="zoomHost" ContentOrientation="Both" ZoomMode="Enabled">
+            <local:GraphControlWin2D
+                x:Name="GraphControl1"
+                Width="200"
+                Height="500"
+                DataPoints="{x:Bind DataPoints, Mode=OneWay}"
+                UseIndexBasedGraphing="True" />
+        </ScrollView>
         <Button
             x:Name="DataChange"
             Click="DataChange_Click"

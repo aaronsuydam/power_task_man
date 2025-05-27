@@ -45,6 +45,9 @@ namespace PowerTaskMan
                     case "PerformancePage":
                         mainNVContentFrame.Navigate(typeof(PerformancePage));
                         break;
+                    case "ProcessesPage":
+                        mainNVContentFrame.Navigate(typeof(ProcessesPage));
+                        break;
                     case "SettingsPage":
                         mainNVContentFrame.Navigate(typeof(SettingsPage));
                         break;

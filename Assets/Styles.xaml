@@ -1,51 +1,83 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:PowerTaskMan.Controls">
+    xmlns:controls="using:PowerTaskMan.Controls"
+    xmlns:media="using:Microsoft.UI.Xaml.Media">
 
-    <!-- Color brushes -->
+    <!--  Color brushes  -->
     <ResourceDictionary.MergedDictionaries>
-        <!-- if Colors.xaml is in the same Resources folder -->
-        <ResourceDictionary Source="/Assets/Colors.xaml"/>
+        <!--  if Colors.xaml is in the same Resources folder  -->
+        <ResourceDictionary Source="/Assets/Colors.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <media:AcrylicBrush
+        x:Key="CustomAcrylicBrush"
+        TintColor="#FF000000"
+        TintOpacity="0.8" />
 
-    <SolidColorBrush x:Key="CPUBrush" Color="{StaticResource ColorBlueRaw}"/>
-    <SolidColorBrush x:Key="MemoryBrush" Color="{StaticResource ColorPurpleRaw}"/>
-    <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource ColorGreenRaw}"/>
-    <SolidColorBrush x:Key="DiskBrush" Color="{StaticResource ColorRedOrangeRaw}"/>
-    <!-- CPU Styles -->
-    <controls:AxisStyle    x:Key="CPU_AxisStyle"    Color="{StaticResource CPUBrush}"    Margin="0"/>
-    <controls:DataPointStyle x:Key="CPU_DataPointStyle"
-                          PointColor="{StaticResource CPUBrush}"
-                          ShowLines="True"
-                          ShowPoints="False"
-                          PointRadius="1"/>
-    <controls:LineStyle    x:Key="CPU_LineStyle"    LineColor="{StaticResource CPUBrush}"    LineThickness="1"/>
+    <SolidColorBrush
+        x:Key="BaseTileFillBrush"
+        Opacity="0.5"
+        Color="{ThemeResource ControlFillColorDefault}" />
 
-    <!-- Memory Styles -->
-    <controls:AxisStyle    x:Key="Memory_AxisStyle"    Color="{StaticResource MemoryBrush}"    Margin="0"/>
-    <controls:DataPointStyle x:Key="Memory_DataPointStyle"
-                          PointColor="{StaticResource MemoryBrush}"
-                          ShowLines="True"
-                          ShowPoints="True"
-                          PointRadius="3"/>
-    <controls:LineStyle    x:Key="Memory_LineStyle"    LineColor="{StaticResource MemoryBrush}"    LineThickness="1"/>
-    <controls:LineStyle     x:Key="GridlineStyle" LineColor="Gray" LineThickness="1" />
+    <SolidColorBrush x:Key="CPUBrush" Color="{StaticResource ColorBlueRaw}" />
+    <SolidColorBrush x:Key="MemoryBrush" Color="{StaticResource ColorPurpleRaw}" />
+    <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource ColorGreenRaw}" />
+    <SolidColorBrush x:Key="DiskBrush" Color="{StaticResource ColorRedOrangeRaw}" />
+    <!--  CPU Styles  -->
+    <controls:AxisStyle
+        x:Key="CPU_AxisStyle"
+        Margin="0"
+        Color="{StaticResource CPUBrush}" />
+    <controls:DataPointStyle
+        x:Key="CPU_DataPointStyle"
+        PointColor="{StaticResource CPUBrush}"
+        PointRadius="1"
+        ShowLines="True"
+        ShowPoints="False" />
+    <controls:LineStyle
+        x:Key="CPU_LineStyle"
+        LineColor="{StaticResource CPUBrush}"
+        LineThickness="1" />
 
-    <!-- GPU Styles -->
-    <controls:AxisStyle    x:Key="GPU_AxisStyle"    Color="{StaticResource GPUBrush}"    Margin="0"/>
-    <controls:DataPointStyle x:Key="GPU_DataPointStyle"
-                          PointColor="{StaticResource GPUBrush}"
-                          ShowLines="True"
-                          ShowPoints="False"
-                          PointRadius="1"/>
-    <controls:LineStyle    x:Key="GPU_LineStyle"    LineColor="{StaticResource GPUBrush}"    LineThickness="1"/>
+    <!--  Memory Styles  -->
+    <controls:AxisStyle
+        x:Key="Memory_AxisStyle"
+        Margin="0"
+        Color="{StaticResource MemoryBrush}" />
+    <controls:DataPointStyle
+        x:Key="Memory_DataPointStyle"
+        PointColor="{StaticResource MemoryBrush}"
+        PointRadius="3"
+        ShowLines="True"
+        ShowPoints="True" />
+    <controls:LineStyle
+        x:Key="Memory_LineStyle"
+        LineColor="{StaticResource MemoryBrush}"
+        LineThickness="1" />
+    <controls:LineStyle
+        x:Key="GridlineStyle"
+        LineColor="Gray"
+        LineThickness="1" />
 
-    <!-- A vertical gradient that sweeps through your key metric colors -->
-    <LinearGradientBrush x:Key="PerformancePageBackground"
-                     StartPoint="0,0" EndPoint="0,1"
-                     Opacity="1">
+    <!--  GPU Styles  -->
+    <controls:AxisStyle
+        x:Key="GPU_AxisStyle"
+        Margin="0"
+        Color="{StaticResource GPUBrush}" />
+    <controls:DataPointStyle
+        x:Key="GPU_DataPointStyle"
+        PointColor="{StaticResource GPUBrush}"
+        PointRadius="1"
+        ShowLines="True"
+        ShowPoints="False" />
+    <controls:LineStyle
+        x:Key="GPU_LineStyle"
+        LineColor="{StaticResource GPUBrush}"
+        LineThickness="1" />
+
+    <!--  A vertical gradient that sweeps through your key metric colors  -->
+    <LinearGradientBrush x:Key="PerformancePageBackground" Opacity="1" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="{StaticResource ColorRedRaw}" />
         <GradientStop Offset="0.20" Color="{StaticResource ColorYellowRaw}" />
         <GradientStop Offset="0.40" Color="{StaticResource ColorGreenRaw}" />
