@@ -54,6 +54,29 @@
                     <UniformGridLayout Orientation="Horizontal" MinItemWidth="100" ItemsJustification="SpaceEvenly"/>
                 </ItemsRepeater.Layout>
             </ItemsRepeater>
+
+            <ItemsRepeater x:Name="PerCoreMetricsRepeater"
+                           Grid.Row="2"
+                           Grid.ColumnSpan="2"
+                           ItemsSource="{x:Bind PerCoreMetricsCollection}"
+                           >
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout
+                        Orientation="Horizontal"
+                        MinItemWidth="100"
+                        ItemsJustification="SpaceEvenly" />
+                </ItemsRepeater.Layout>
+
+                <ItemsRepeater.ItemTemplate>
+                    <local:MetricsGraphTile 
+                        x:DataType="local:MetricsGraphTile"
+                        Title="{x:Bind Title}"
+                        PrimaryMetricDisplayValue="{x:Bind PrimaryMetricDisplayValue}"
+                        SecondaryMetricDisplayValue="{x:Bind SecondaryMetricDisplayValue}"
+                        DataPoints="{x:Bind DataPoints}" />
+                </ItemsRepeater.ItemTemplate>
+                
+            </ItemsRepeater>
         </Grid>
     </Border>
 

@@ -20,6 +20,15 @@
         Opacity="0.5"
         Color="{ThemeResource ControlFillColorDefault}" />
 
+    <Style
+        x:Key="SmallTitleStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="Foreground" Value="{ThemeResource ControlForegroundColorDefault}" />
+    </Style>
+
     <SolidColorBrush x:Key="CPUBrush" Color="{StaticResource ColorBlueRaw}" />
     <SolidColorBrush x:Key="MemoryBrush" Color="{StaticResource ColorPurpleRaw}" />
     <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource ColorGreenRaw}" />
