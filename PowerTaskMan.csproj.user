@@ -8,7 +8,7 @@
     <Page Update="Controls\MetricsGraphTile.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Update="Controls\MetricsTile.xaml">
+    <Page Update="Controls\CPUMetricsTile.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Assets\Styles.xaml">

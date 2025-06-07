@@ -1,18 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="power_task_man.Pages.ProcessesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:power_task_man.Pages"
-    xmlns:controls="using:PowerTaskMan.Controls"
     xmlns:List="using:System.Collections.Generic"
+    xmlns:controls="using:PowerTaskMan.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:power_task_man.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d"
-    >
+    xmlns:services="using:PowerTaskMan.Services"
+    mc:Ignorable="d">
 
-    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
-        <controls:MetricsTile Width="500" Height="500" SecondaryMetricsTextAlignment="Left" SecondaryMetrics="{x:Bind Metrics}"/>
-        
+    <Grid>
+        <controls:CPUMetricsTile Width="800" Height="600" />
+
+        <!--<controls:GraphControlWin2D Width="200" Height="150" DataPoints="{x:Bind perfmod_freq}"/>-->
     </Grid>
 </Page>

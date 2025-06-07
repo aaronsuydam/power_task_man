@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using dotPerfStat.Types;
 using Microsoft.UI.Dispatching;
-using PowerTaskMan.Services;
 using PowerTaskMan.Common;
 using PowerTaskMan.Services;
 using System.Collections.Generic;
@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using dotPerfStat.Types;
 
 namespace PowerTaskMan.ViewModels
 {
@@ -56,13 +55,13 @@ namespace PowerTaskMan.ViewModels
         );
 
         [ObservableProperty]
-        List<CoreFrequencyData> perCoreCPUFrequencySeries = new List<CoreFrequencyData>();
+        List<PerCoreMetric> perCoreCPUFrequencySeries = new List<PerCoreMetric>();
 
         public PerformanceViewModel()
         {
             perCoreCPUFrequencySeries = cpuPerfService.Cores.Select((core, index) =>
             {
-                return new CoreFrequencyData
+                return new PerCoreMetric
                 {
                     FrequencyData = new List<ICoordinatePair>(
                         Enumerable.Range(0, 121).Select(_ => new CoordinatePair { X = 0, Y = 0 })
@@ -181,7 +180,7 @@ namespace PowerTaskMan.ViewModels
 
         void UpdatePerCoreCPUFrequencyChart(List<StreamingCorePerfData> new_data)
         {
-            foreach ((CoreFrequencyData coreData, int index) in PerCoreCPUFrequencySeries.Select((value, i) => (value, i)))
+            foreach ((PerCoreMetric coreData, int index) in PerCoreCPUFrequencySeries.Select((value, i) => (value, i)))
             {
                 var values = coreData.FrequencyData.Cast<CoordinatePair>().ToList();
                 values.RemoveAt(0);

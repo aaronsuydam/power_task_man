@@ -51,31 +51,34 @@
                 </ItemsRepeater.ItemTemplate>
 
                 <ItemsRepeater.Layout>
-                    <UniformGridLayout Orientation="Horizontal" MinItemWidth="100" ItemsJustification="SpaceEvenly"/>
+                    <UniformGridLayout
+                        ItemsJustification="SpaceEvenly"
+                        MinItemWidth="100"
+                        Orientation="Horizontal" />
                 </ItemsRepeater.Layout>
             </ItemsRepeater>
 
-            <ItemsRepeater x:Name="PerCoreMetricsRepeater"
-                           Grid.Row="2"
-                           Grid.ColumnSpan="2"
-                           ItemsSource="{x:Bind PerCoreMetricsCollection}"
-                           >
+            <ItemsRepeater
+                x:Name="PerCoreMetricsRepeater"
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                ItemsSource="{x:Bind PerCoreMetricsCollection}">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout
-                        Orientation="Horizontal"
+                        ItemsJustification="SpaceEvenly"
                         MinItemWidth="100"
-                        ItemsJustification="SpaceEvenly" />
+                        Orientation="Horizontal" />
                 </ItemsRepeater.Layout>
 
                 <ItemsRepeater.ItemTemplate>
-                    <local:MetricsGraphTile 
-                        x:DataType="local:MetricsGraphTile"
+                    <local:MetricsGraphTile
                         Title="{x:Bind Title}"
+                        x:DataType="local:MetricsGraphTile"
+                        DataPoints="{x:Bind DataPoints}"
                         PrimaryMetricDisplayValue="{x:Bind PrimaryMetricDisplayValue}"
-                        SecondaryMetricDisplayValue="{x:Bind SecondaryMetricDisplayValue}"
-                        DataPoints="{x:Bind DataPoints}" />
+                        SecondaryMetricDisplayValue="{x:Bind SecondaryMetricDisplayValue}" />
                 </ItemsRepeater.ItemTemplate>
-                
+
             </ItemsRepeater>
         </Grid>
     </Border>

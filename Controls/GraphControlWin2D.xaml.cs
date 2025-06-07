@@ -14,11 +14,11 @@ using Windows.UI;
 using static System.Collections.Specialized.BitVector32;
 
 namespace PowerTaskMan.Controls
-{
-    public class AxisStyle
+{    public class AxisStyle
     {
         public Color Color { get; set; } = Colors.Gray;
         public double Margin { get; set; } = 20.0f;
+        public bool ShowAxes { get; set; } = true;
     }
 
     public class DataPointStyle
@@ -28,11 +28,10 @@ namespace PowerTaskMan.Controls
         public bool ShowLines { get; set; } = true;
         public double PointRadius { get; set; } = 3.0f;
         public double LineThickness { get; set; } = 2.0f;
-    }
-
-    public class GridStyle
+    }    public class GridStyle
     {
         public Color LineColor { get; set; } = Colors.LightGray;
+        public bool ShowGridLines { get; set; } = true;
     }
 
     public class LineStyle
@@ -42,11 +41,11 @@ namespace PowerTaskMan.Controls
     }
 
     public static class DefaultStyles
-    {
-        public static AxisStyle axis = new AxisStyle
+    {        public static AxisStyle axis = new AxisStyle
         {
             Color = Colors.Black,
-            Margin = 10
+            Margin = 10,
+            ShowAxes = true
         };
 
         public static DataPointStyle datapoint = new DataPointStyle
@@ -55,12 +54,16 @@ namespace PowerTaskMan.Controls
             ShowLines = true,
             ShowPoints = true,
             PointRadius = 1.0f
-        };
-
-        public static LineStyle line = new LineStyle
+        };        public static LineStyle line = new LineStyle
         {
             LineColor = new SolidColorBrush(Colors.LightGray),
             LineThickness = 1.0f,
+        };
+
+        public static GridStyle grid = new GridStyle
+        {
+            LineColor = Colors.LightGray,
+            ShowGridLines = true
         };
     }
 
@@ -546,43 +549,73 @@ namespace PowerTaskMan.Controls
                 FontFamily = "Arial", // Optional: Set font family
                 HorizontalAlignment = CanvasHorizontalAlignment.Center,
                 VerticalAlignment = CanvasVerticalAlignment.Center
-            };
-
-
-            // Draw vertical gridlines.
+            };            // Draw vertical gridlines.
             int v_gl_count = (int)Math.Floor((right - left) / x_step);
             var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this._gridline_brush);
 
-            for (int i = 1; i < v_gl_count + 1; i++)
+            // Only draw gridlines if ShowGridLines is true
+            if (GridCustomization.ShowGridLines)
             {
-                float x = left + i * x_step;
-                args.DrawingSession.DrawLine(x, bottom, x, top, line_brush);
+                for (int i = 1; i < v_gl_count + 1; i++)
+                {
+                    float x = left + i * x_step;
+                    args.DrawingSession.DrawLine(x, bottom, x, top, line_brush);
 
-                float dataValue = xMin + (i * xIntervalDataUnits);
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), x, bottom + (margin / 2), _text_brush.Color, textFormat);
+                    // Only draw axis labels if ShowAxes is true
+                    if (AxisCustomization.ShowAxes)
+                    {
+                        float dataValue = xMin + (i * xIntervalDataUnits);
+                        args.DrawingSession.DrawText(dataValue.ToString("F0"), x, bottom + (margin / 2), _text_brush.Color, textFormat);
+                    }
+                }
+
+                // Draw horizontal gridlines.
+                int h_gl_count = (int)Math.Floor((bottom - top) / y_step);
+                for (int i = 1; i < h_gl_count + 1; i++)
+                {
+                    float y = bottom - i * y_step;
+                    args.DrawingSession.DrawLine(left, y, right, y, line_brush);
+
+                    // Only draw axis labels if ShowAxes is true
+                    if (AxisCustomization.ShowAxes)
+                    {
+                        float dataValue = yMin + (i * yIntervalDataUnits); // yMax at the top, yMin at the bottom
+                        args.DrawingSession.DrawText(dataValue.ToString("F0"), left - (margin / 2), y, _text_brush.Color, textFormat);
+                    }
+                }
+            }
+            else if (AxisCustomization.ShowAxes)
+            {
+                // If gridlines are hidden but axes are shown, still draw the axis labels
+                for (int i = 1; i < v_gl_count + 1; i++)
+                {
+                    float x = left + i * x_step;
+                    float dataValue = xMin + (i * xIntervalDataUnits);
+                    args.DrawingSession.DrawText(dataValue.ToString("F0"), x, bottom + (margin / 2), _text_brush.Color, textFormat);
+                }
+
+                int h_gl_count = (int)Math.Floor((bottom - top) / y_step);
+                for (int i = 1; i < h_gl_count + 1; i++)
+                {
+                    float y = bottom - i * y_step;
+                    float dataValue = yMin + (i * yIntervalDataUnits);
+                    args.DrawingSession.DrawText(dataValue.ToString("F0"), left - (margin / 2), y, _text_brush.Color, textFormat);
+                }
             }
 
-            // Draw horizontal gridlines.
-            int h_gl_count = (int)Math.Floor((bottom - top) / y_step);
-            for (int i = 1; i < h_gl_count + 1; i++)
+            // Only draw axes if ShowAxes is true
+            if (AxisCustomization.ShowAxes)
             {
-                float y = bottom - i * y_step;
-                args.DrawingSession.DrawLine(left, y, right, y, line_brush);
+                args.DrawingSession.DrawLine(
+                    origin.X, origin.Y,
+                    x_axis_end.X, x_axis_end.Y,
+                    AxisCustomization.Color, 2);
 
-                float dataValue = yMin + (i * yIntervalDataUnits); // yMax at the top, yMin at the bottom
-                args.DrawingSession.DrawText(dataValue.ToString("F0"), left - (margin / 2), y, _text_brush.Color, textFormat);
-
+                args.DrawingSession.DrawLine(
+                    origin.X, origin.Y,
+                    y_axis_end.X, y_axis_end.Y,
+                    AxisCustomization.Color, 2);
             }
-
-            args.DrawingSession.DrawLine(
-                origin.X, origin.Y,
-                x_axis_end.X, x_axis_end.Y,
-                AxisCustomization.Color, 2);
-
-            args.DrawingSession.DrawLine(
-                origin.X, origin.Y,
-                y_axis_end.X, y_axis_end.Y,
-                AxisCustomization.Color, 2);
         }
 
         /// <summary>

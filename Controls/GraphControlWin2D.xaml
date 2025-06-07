@@ -16,17 +16,17 @@
         <Converters:EmptyStringToVisibilityConverter x:Key="EmptyStringToVisibilityConverter" />
         <media:AcrylicBrush
             x:Key="GraphBackground"
-            FallbackColor="LightGray"
             TintColor="Transparent"
-            TintOpacity="1" />
+            TintOpacity="0.5" />
     </UserControl.Resources>
 
     <Border
         x:Name="GraphControlBorderXamlRef"
         Grid.Row="1"
         Grid.Column="0"
-        Height="250"
-        Background="{StaticResource GraphBackground}"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch"
+        Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
         BorderBrush="DarkGray"
         BorderThickness="1"
         CornerRadius="5">
@@ -56,9 +56,9 @@
                 x:Name="Canvas"
                 Grid.Row="1"
                 Grid.Column="0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
                 Draw="Canvas_Draw" />
-
-
 
             <TextBlock
                 x:Name="DataLabelTextBlock"

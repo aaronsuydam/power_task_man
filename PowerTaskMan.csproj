@@ -19,6 +19,9 @@
 
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Controls\MetricsTile - Copy.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Remove="Assets\Colors.xaml" />
     <Content Remove="Assets\PowerTaskManLogo.png" />
     <Content Remove="Assets\Readme.md" />
@@ -30,7 +33,9 @@
     <None Remove="Controls\GraphControlResource.xaml" />
     <None Remove="Controls\GraphControlWin2D.xaml" />
     <None Remove="Controls\MetricsGraphTile.xaml" />
-    <None Remove="Controls\MetricsTile.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Remove="Controls\MetricsTile - Copy.xaml" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,10 +54,10 @@
     <PackageReference Include="LibSystem" Version="0.0.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.1742" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.4" />
-    <PackageReference Include="System.Management" Version="9.0.4" />
+    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.5" />
+    <PackageReference Include="System.Management" Version="9.0.5" />
     <Manifest Include="$(ApplicationManifest)" />
   </ItemGroup>
 
@@ -65,12 +70,18 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Controls\MetricsTile - Copy.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Page Update="Controls\MetricsGraphTile.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <None Update="Controls\MetricsTile - Copy.xaml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Update="Controls\MetricsTile.xaml">
+    <Page Update="Controls\CPUMetricsTile.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

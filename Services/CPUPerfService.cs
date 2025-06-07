@@ -6,18 +6,16 @@ using dotPerfStat;
 using dotPerfStat.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PowerTaskMan.Common;
+using System.Linq;
 
 namespace PowerTaskMan.Services
 {
-    public partial class CoreFrequencyData : ObservableObject
-    {
-        [ObservableProperty]
-        List<ICoordinatePair> frequencyData;
-        public int CoreNumber { get; set; }
-    }
+    
     
     public interface ICPUPerfService
     {
+        public float CurrentFrequency { get; set; }
+        public u8 CurrentUtilization { get; set; }
         public List<WinCPUCore> Cores { get; }
         public List<StreamingCorePerfData> UpdateCPUStats();
     }
@@ -34,6 +32,8 @@ namespace PowerTaskMan.Services
         CancellationTokenSource cpu_freq;
 
         public List<WinCPUCore> Cores => _cores;
+        public float CurrentFrequency { get; set; } = 0.0f;
+        public u8 CurrentUtilization { get; set; } = 0;
 
         UInt32 max_freq = 0;
 
@@ -61,6 +61,8 @@ namespace PowerTaskMan.Services
                 var updated_core_stats = core.Update();
                 newStats.Add(updated_core_stats);
             }
+            CurrentFrequency = newStats.Select(coredata => coredata.Frequency).Average() / 1000000.0f; // Convert to GHz
+            CurrentFrequency = newStats.Select(coredata => (float)coredata.UtilizationPercent).Average(); // Average utilization percent
             return newStats;
         }
 

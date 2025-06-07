@@ -66,7 +66,7 @@
               MinRowSpacing="5" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
-                    <DataTemplate x:DataType="services:CoreFrequencyData">
+                    <DataTemplate x:DataType="common:PerCoreMetric">
                         <controls:GraphControlWin2D
                 DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
                 LineCustomization              ="{StaticResource CPU_LineStyle}"

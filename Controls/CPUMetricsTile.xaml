@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="PowerTaskMan.Controls.CPUMetricsTile"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:common="using:PowerTaskMan.Common"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:PowerTaskMan.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
+    xmlns:viewmodels="using:PowerTaskMan.ViewModels">
+
+    <UserControl.Resources>
+        <local:AxisStyle
+            x:Name="NoAxes"
+            Margin="0"
+            ShowAxes="False"
+            Color="Transparent" />
+    </UserControl.Resources>
+
+    <Border
+        Background="{ThemeResource BaseTileFillBrush}"
+        BorderBrush="{ThemeResource ButtonBorderThemeBrush}"
+        BorderThickness="1"
+        CornerRadius="5">
+        <Grid Padding="10,0,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="CPU" />
+
+            <ItemsRepeater
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                ItemsSource="{Binding PrimaryMetrics}">
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="local:Metric">
+                        <StackPanel
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Orientation="Vertical">
+                            <TextBlock
+                                x:Name="PrimaryMetricName"
+                                Text="{x:Bind Name}"
+                                TextTrimming="None"
+                                TextWrapping="NoWrap" />
+                            <TextBlock x:Name="PrimaryMetricValue" Text="{x:Bind Value}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout ItemsJustification="SpaceEvenly" Orientation="Horizontal" />
+                </ItemsRepeater.Layout>
+            </ItemsRepeater>
+
+            <ItemsRepeater
+                x:Name="PerCoreMetricsRepeater"
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Width="Auto"
+                ItemsSource="{x:Bind _cpuPerformanceViewModel.PerCoreFrequencyData, Mode=OneWay}">
+                <ItemsRepeater.Layout>
+                    <UniformGridLayout
+                        ItemsJustification="Start"
+                        ItemsStretch="Fill"
+                        MinItemHeight="100"
+                        MinItemWidth="200"
+                        Orientation="Horizontal" />
+                </ItemsRepeater.Layout>
+
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="common:PerCoreMetric">
+                        <Border BorderBrush="Aqua" BorderThickness="1">
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="2*" />
+                                </Grid.ColumnDefinitions>
+
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    Style="{StaticResource SubtitleTextBlockStyle}"
+                                    Text="{x:Bind sys:String.Format('Core {0}', CoreNumber)}" />
+
+                                <TextBlock
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    Style="{StaticResource BodyStrongTextBlockStyle}"
+                                    Text="{x:Bind latestFrequency, Mode=OneWay}" />
+
+                                <TextBlock
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    HorizontalAlignment="Center"
+                                    Style="{StaticResource BodyTextBlockStyle}"
+                                    Text="{x:Bind latestUtilization, Mode=OneWay}" />
+
+                                <local:GraphControlWin2D
+                                    x:Name="CoreFrequencyGraphControl"
+                                    Grid.Row="0"
+                                    Grid.RowSpan="3"
+                                    Grid.Column="1"
+                                    Width="Auto"
+                                    Height="Auto"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    AxisCustomization="{StaticResource NoAxes}"
+                                  DataPointCustomization="{StaticResource CPU_DataPointStyle}"
+                                    DataPoints="{x:Bind FrequencyData, Mode=OneWay}"
+                                    LineCustomization="{StaticResource CPU_LineStyle}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </Grid>
+    </Border>
+</UserControl>

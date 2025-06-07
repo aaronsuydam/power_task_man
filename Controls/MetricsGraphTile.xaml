@@ -8,14 +8,21 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Border BorderBrush="{StaticResource ButtonBorderThemeBrush}" Background="{StaticResource BaseTileFillBrush}" BorderThickness="0.5" CornerRadius="5">
+    <Border
+        Background="{StaticResource BaseTileFillBrush}"
+        BorderBrush="{StaticResource ButtonBorderThemeBrush}"
+        BorderThickness="0.5"
+        CornerRadius="5">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Grid.Column="0" Orientation="Vertical" VerticalAlignment="Stretch">
+            <StackPanel
+                Grid.Column="0"
+                VerticalAlignment="Stretch"
+                Orientation="Vertical">
                 <TextBlock
                     Margin="10,0,0,10"
                     Style="{StaticResource SmallTitleStyle}"
@@ -30,7 +37,7 @@
                     Text="{x:Bind SecondaryMetricDisplayValue}" />
             </StackPanel>
 
-            <local:GraphControlWin2D DataPoints="{x:Bind DataPoints}" Background="Transparent" />
+            <local:GraphControlWin2D Background="Transparent" DataPoints="{x:Bind DataPoints}" />
         </Grid>
     </Border>
 </UserControl>

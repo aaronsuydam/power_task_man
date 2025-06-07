@@ -13,6 +13,9 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using PowerTaskMan.Controls;
+using PowerTaskMan.Common;
+using PowerTaskMan.ViewModels;
+using PowerTaskMan;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -24,9 +27,13 @@ namespace power_task_man.Pages
     /// </summary>
     public sealed partial class ProcessesPage : Page
     {
+        public IList<ICoordinatePair> perfmod_freq;
+        public CPUPerformanceViewModel _vm;
         public ProcessesPage()
         {
             this.InitializeComponent();
+            _vm = App.ServiceProvider.GetService(typeof(CPUPerformanceViewModel)) as CPUPerformanceViewModel;
+            perfmod_freq = _vm.CpuFrequencyData;
         }
 
         public List<Metric> Metrics = [
