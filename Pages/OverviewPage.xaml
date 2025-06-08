@@ -6,11 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:PowerTaskMan.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-  
     mc:Ignorable="d">
 
     <Grid>
-        <ScrollView x:Name="zoomHost" ContentOrientation="Both" ZoomMode="Enabled">
+        <ScrollView
+            x:Name="zoomHost"
+            ContentOrientation="Both"
+            ZoomMode="Enabled">
             <local:GraphControlWin2D
                 x:Name="GraphControl1"
                 Width="200"

@@ -1,4 +1,4 @@
-using Microsoft.Graphics.Canvas;
+﻿using Microsoft.Graphics.Canvas;
 using Microsoft.Graphics.Canvas.Text;
 using Microsoft.Graphics.Canvas.UI.Xaml;
 using Microsoft.UI;
@@ -14,11 +14,14 @@ using Windows.UI;
 using static System.Collections.Specialized.BitVector32;
 
 namespace PowerTaskMan.Controls
-{    public class AxisStyle
+{    
+public class AxisStyle
     {
         public Color Color { get; set; } = Colors.Gray;
         public double Margin { get; set; } = 20.0f;
         public bool ShowAxes { get; set; } = true;
+        // New property to set a multiplier for gridline calculation
+        public double MoreOrLessGridlines { get; set; } = 1;
     }
 
     public class DataPointStyle
@@ -28,7 +31,8 @@ namespace PowerTaskMan.Controls
         public bool ShowLines { get; set; } = true;
         public double PointRadius { get; set; } = 3.0f;
         public double LineThickness { get; set; } = 2.0f;
-    }    public class GridStyle
+    }    
+    public class GridStyle
     {
         public Color LineColor { get; set; } = Colors.LightGray;
         public bool ShowGridLines { get; set; } = true;
@@ -147,7 +151,7 @@ namespace PowerTaskMan.Controls
         private bool notinit = true;
         private SolidColorBrush _background_brush = new SolidColorBrush(Colors.Transparent);
         private SolidColorBrush _text_brush = (SolidColorBrush)Application.Current.Resources["TextFillColorPrimaryBrush"];
-        private SolidColorBrush _gridline_brush = new SolidColorBrush(Colors.LightGray);
+
         // Constructor
         public GraphControlWin2D()
         {
@@ -368,29 +372,32 @@ namespace PowerTaskMan.Controls
         {
             if (DataPoints == null || DataPoints.Count < 2)
                 return;
-            // What is the max and min values we are going to display?
-            CoordinatePair max = new CoordinatePair { X = DataPoints.ElementAt(0).X, Y = DataPoints.ElementAt(0).Y };
-            CoordinatePair min = new CoordinatePair { X = DataPoints.ElementAt(0).X, Y = DataPoints.ElementAt(0).Y };
 
-            max.X = DataPoints.MaxBy(DataPoints => DataPoints.X).X;
-            max.Y = DataPoints.MaxBy(DataPoints => DataPoints.Y).Y;
+            // 1) Raw data bounds
+            float rawMinX = DataPoints.Min(p => p.X);
+            float rawMaxX = DataPoints.Max(p => p.X);
+            float rawMinY = DataPoints.Min(p => p.Y);
+            float rawMaxY = DataPoints.Max(p => p.Y);
 
-            min.X = DataPoints.MinBy(DataPoints => DataPoints.X).X;
-            min.Y = DataPoints.MinBy(DataPoints => DataPoints.Y).Y;
+            // 2) Guarantee non-zero span
+            if (rawMaxX == rawMinX) rawMaxX = rawMinX + 1;
+            if (rawMaxY == rawMinY) rawMaxY = rawMinY + 1;
 
-            // Calculate intervals for the gridlines, ensuring they are never 0;
-            if (max.X == min.X)
-            {
-                max.X += 1;
-            }
-            if (max.Y == min.Y)
-            {
-                max.Y += 1;
-            }
+            // 3) Compute quarter-range padding for y-axis values
+            float padY = (rawMaxY - rawMinY) * 0.15f;
 
-            xRange = max.X - min.X;
-            yRange = max.Y - min.Y;
+            // 4) Apply padding
+            min_x = rawMinX;
+            max_x = rawMaxX;
+            min_y = rawMinY - padY;
+            max_y = rawMaxY + padY;
 
+            // 5) Never go below zero on Y
+            if (min_y < 0) min_y = 0;
+
+            // 6) Final ranges
+            xRange = max_x - min_x;
+            yRange = max_y - min_y;
         }
 
 
@@ -415,26 +422,25 @@ namespace PowerTaskMan.Controls
 
             float width_of_y_labels = MeasureTextWidth(sender.Device, max_y.ToString(), textFormat);
 
-
-
             // Draw axes
             var width = (float)sender.ActualWidth;
             var height = (float)sender.ActualHeight;
-            var margin = (float)this.AxisCustomization.Margin + width_of_y_labels;
+            var margin = 0.0f;
+            if (this.AxisCustomization.ShowAxes)
+            {
+                margin = (float)this.AxisCustomization.Margin + width_of_y_labels;
+            }
             // Calculate the graph's origin
             float origin_x = 0 + margin;
             float origin_y = 0 - margin + height;
             CoordinatePair origin = new CoordinatePair { X = origin_x, Y = origin_y };
 
-
-
             // If the height and or width of the canvas is more than an order of magnitude different from the data, define the scale
             // factor
             (float x_scale, float y_scale) = DetermineScalingFactor(height, width, margin);
 
-            float x_interval = DetermineAxisGridlineInterval(this.xRange);
-            float y_interval = DetermineAxisGridlineInterval(this.yRange);
-
+            float x_interval = DetermineAxisGridlineInterval(this.xRange, (float)this.AxisCustomization.MoreOrLessGridlines);
+            float y_interval = DetermineAxisGridlineInterval(this.yRange, (float)this.AxisCustomization.MoreOrLessGridlines);
 
             DrawAxesAndGridLines(sender, args,
                                  width, height,
@@ -551,7 +557,7 @@ namespace PowerTaskMan.Controls
                 VerticalAlignment = CanvasVerticalAlignment.Center
             };            // Draw vertical gridlines.
             int v_gl_count = (int)Math.Floor((right - left) / x_step);
-            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this._gridline_brush);
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, new SolidColorBrush(this.GridCustomization.LineColor));
 
             // Only draw gridlines if ShowGridLines is true
             if (GridCustomization.ShowGridLines)
@@ -619,40 +625,61 @@ namespace PowerTaskMan.Controls
         }
 
         /// <summary>
-        /// Determines the <b>data units</b> interval for the gridlines on a particular axis.
+        /// Returns a “nice” data-unit interval for gridlines.
         /// </summary>
-        /// <param name="data_range"></param>
-        /// <returns></returns>
-        float DetermineAxisGridlineInterval(float data_range, float more_or_less_gridlines = 1)
+        /// <param name="dataRange">Span of data on the axis (max – min).</param>
+        /// <param name="moreOrLessGridlines">
+        /// Multiplier on the base target count (default = 1 → ~5 lines).
+        /// </param>
+        /// <returns>Interval between gridlines, in data units.</returns>
+        private float DetermineAxisGridlineInterval(float dataRange, float moreOrLessGridlines = 1)
         {
-            // 1. Calculate power of 10
-            double nearest_power_ten = Math.Floor(Math.Log10(data_range));
-            double next_lowest_power_ten = nearest_power_ten - 1;
+            if (dataRange <= 0)
+                return 0;
 
-            float magnitude = (float)Math.Pow(10, next_lowest_power_ten);
+            // 1) Compute raw step based on desired number of lines (~5 × multiplier)
+            int baseTarget = 5;
+            double targetLines = baseTarget * moreOrLessGridlines;
+            double rawStep = dataRange / targetLines;
 
-            // 2. Get the fractional part relative to the magnitude
-            float fraction = (data_range / magnitude) * more_or_less_gridlines;
+            // 2) Round to a “nice” number (1, 2, 5 or 10 × 10^exp)
+            double niceStep = NiceNumber(rawStep, round: true);
 
-            // 3. Choose a "nice" interval based on the fractional part
-            float interval;
-            if (fraction <= 3) interval = 3.0f;
-            else if (fraction <= 6) interval = (float)Math.Round(fraction);
-            else interval = 6.0f;
+            return (float)niceStep;
+        }
 
-            // 4. Determine max and min intervals
-            float max_interval = data_range / 10.0f; // Maximum allowable interval for 15 gridlines
-            float min_interval = data_range / 3.0f;  // Minimum allowable interval for 3 gridlines
+        /// <summary>
+        /// Rounds value to 1, 2, 5 or 10 × 10^exponent.
+        /// </summary>
+        /// <param name="value">The unrounded step size.</param>
+        /// <param name="round">
+        /// If true, uses thresholds [1.5, 3, 7] for 1,2,5,10.
+        /// If false, uses [1,2,5,10] so you always get >= value.
+        /// </param>
+        private static double NiceNumber(double value, bool round)
+        {
+            double exp = Math.Floor(Math.Log10(value));
+            double frac = value / Math.Pow(10, exp);
+            double niceFrac;
 
-            // Ensure min_interval is never greater than max_interval
-            if (min_interval > max_interval)
+            if (round)
             {
-                min_interval = max_interval;
+                if (frac < 1.5) niceFrac = 1;
+                else if (frac < 3) niceFrac = 2;
+                else if (frac < 7) niceFrac = 5;
+                else niceFrac = 10;
+            }
+            else
+            {
+                if (frac <= 1) niceFrac = 1;
+                else if (frac <= 2) niceFrac = 2;
+                else if (frac <= 5) niceFrac = 5;
+                else niceFrac = 10;
             }
 
-            // 5. Clamp the interval between min and max
-            return Math.Clamp(interval, min_interval, max_interval);
+            return niceFrac * Math.Pow(10, exp);
         }
+
 
         /// <summary>
         /// Determines the scaling factor for the x and y axes.

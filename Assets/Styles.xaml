@@ -15,10 +15,9 @@
         TintColor="#FF000000"
         TintOpacity="0.8" />
 
-    <SolidColorBrush
-        x:Key="BaseTileFillBrush"
-        Opacity="0.5"
-        Color="{ThemeResource ControlFillColorDefault}" />
+    <media:AcrylicBrush x:Key="PerCoreTileFillBrush" TintColor="{ThemeResource LayerFillColorDefault}" />
+
+    <SolidColorBrush x:Key="BaseTileFillBrush" Color="{ThemeResource LayerOnMicaBaseAltFillColorDefault}" />
 
     <Style
         x:Key="SmallTitleStyle"

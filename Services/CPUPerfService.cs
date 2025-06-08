@@ -7,6 +7,9 @@ using dotPerfStat.Types;
 using CommunityToolkit.Mvvm.ComponentModel;
 using PowerTaskMan.Common;
 using System.Linq;
+using Microsoft.Windows.ApplicationModel.WindowsAppRuntime;
+using System.Runtime.InteropServices;
+using Windows.Foundation.Metadata;
 
 namespace PowerTaskMan.Services
 {
@@ -41,12 +44,14 @@ namespace PowerTaskMan.Services
         {
             int core_count = Environment.ProcessorCount;
 
-            for (int i = 0; i < core_count; i++)
+            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                WinCPUCore newCore = new((u8)i);
-                _cores.Add(newCore);
+                for (int i = 0; i < core_count; i++)
+                {
+                    WinCPUCore newCore = new((u8)i);
+                    _cores.Add(newCore);
+                }
             }
-
         }
 
         /// <summary>
@@ -62,7 +67,7 @@ namespace PowerTaskMan.Services
                 newStats.Add(updated_core_stats);
             }
             CurrentFrequency = newStats.Select(coredata => coredata.Frequency).Average() / 1000000.0f; // Convert to GHz
-            CurrentFrequency = newStats.Select(coredata => (float)coredata.UtilizationPercent).Average(); // Average utilization percent
+            CurrentUtilization = (byte)newStats.Select(coredata => (float)coredata.UtilizationPercent).Average(); // Average utilization percent
             return newStats;
         }
 
