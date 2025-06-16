@@ -26,10 +26,12 @@
     <Content Remove="Assets\PowerTaskManLogo.png" />
     <Content Remove="Assets\Readme.md" />
     <Content Remove="Assets\Styles.xaml" />
+    <Content Remove="Assets\Typography.xaml" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\Colors.xaml" />
     <None Remove="Assets\Styles.xaml" />
+    <None Remove="Assets\Typography.xaml" />
     <None Remove="Controls\GraphControlResource.xaml" />
     <None Remove="Controls\GraphControlWin2D.xaml" />
     <None Remove="Controls\MetricsGraphTile.xaml" />
@@ -56,6 +58,7 @@
     <PackageReference Include="Microsoft.Graphics.Win2D" Version="1.3.2" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.7.250401001" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.0" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="9.0.5" />
     <PackageReference Include="System.Management" Version="9.0.5" />
     <Manifest Include="$(ApplicationManifest)" />
@@ -73,7 +76,13 @@
     <None Include="Controls\MetricsTile - Copy.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Controls\MemoryTile.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Controls\MetricsGraphTile.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="Assets\Typography.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <None Update="Controls\MetricsTile - Copy.xaml">

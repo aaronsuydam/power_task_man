@@ -4,14 +4,17 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:common="using:PowerTaskMan.Common"
-    xmlns:services="using:PowerTaskMan.Services"
     xmlns:controls="using:PowerTaskMan.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:services="using:PowerTaskMan.Services"
     mc:Ignorable="d">
 
     <ScrollView>
-        <Grid Margin="20" ColumnSpacing="200" RowSpacing="50">
+        <Grid
+            Margin="20"
+            ColumnSpacing="200"
+            RowSpacing="50">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -24,55 +27,61 @@
             </Grid.RowDefinitions>
 
             <TextBlock
-          Grid.Row="0" Grid.Column="0"
-          HorizontalAlignment="Center" VerticalAlignment="Center"
-          FontSize="20"
-          Text="Performance" />
+                Grid.Row="0"
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="20"
+                Text="Performance" />
 
-            <!-- Memory Use Chart -->
+            <!--  Memory Use Chart  -->
             <controls:GraphControlWin2D
-          Grid.Row="1" Grid.Column="1"
-          Title="Memory Use (%)"
-          DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
-          DataPointCustomization="{StaticResource Memory_DataPointStyle}"
-          LineCustomization              ="{StaticResource Memory_LineStyle}"
-          AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
-          DataPoints             ="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
-          UseIndexBasedGraphing  ="True" />
+                Title="Memory Use (%)"
+                Grid.Row="1"
+                Grid.Column="1"
+                AxisCustomization="{x:Bind controls:DefaultStyles.axis}"
+                DataLabel="{x:Bind viewModel.UsedMemoryMBString, Mode=OneWay}"
+                DataPointCustomization="{StaticResource Memory_DataPointStyle}"
+                DataPoints="{x:Bind viewModel.MemoryUseChartSeries, Mode=OneWay}"
+                LineCustomization="{StaticResource Memory_LineStyle}"
+                UseIndexBasedGraphing="True" />
 
-            <!-- CPU Frequency Chart -->
+            <!--  CPU Frequency Chart  -->
             <controls:GraphControlWin2D
-          Grid.Row="1" Grid.Column="0"
-          Title="CPU Frequency (MHz)"
-          DataLabel              ="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
-          DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
-          LineCustomization              ="{StaticResource CPU_LineStyle}"
-          AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
-          DataPoints             ="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
-          UseIndexBasedGraphing  ="True" />
+                Title="CPU Frequency (MHz)"
+                Grid.Row="1"
+                Grid.Column="0"
+                AxisCustomization="{x:Bind controls:DefaultStyles.axis}"
+                DataLabel="{x:Bind viewModel.CurrentFrequency, Mode=OneWay}"
+                DataPointCustomization="{StaticResource CPU_DataPointStyle}"
+                DataPoints="{x:Bind viewModel.CpuFrequencyChartSeries, Mode=OneWay}"
+                LineCustomization="{StaticResource CPU_LineStyle}"
+                UseIndexBasedGraphing="True" />
 
-            <!-- Per-Core Charts -->
+            <!--  Per-Core Charts  -->
             <ItemsRepeater
-          Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-          Margin="170,0"
-          HorizontalAlignment="Center"
-          ElementPrepared="ItemsRepeater_ElementPrepared"
-          ItemsSource="{x:Bind viewModel.PerCoreCPUFrequencySeries, Mode=OneWay}">
+                Grid.Row="2"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="170,0"
+                HorizontalAlignment="Center"
+                ElementPrepared="ItemsRepeater_ElementPrepared"
+                ItemsSource="{x:Bind viewModel.PerCoreCPUFrequencySeries, Mode=OneWay}">
                 <ItemsRepeater.Layout>
                     <UniformGridLayout
-              MinColumnSpacing="5"
-              MinItemHeight="250"
-              MinItemWidth="300"
-              MinRowSpacing="5" />
+                        MinColumnSpacing="5"
+                        MinItemHeight="250"
+                        MinItemWidth="300"
+                        MinRowSpacing="5" />
                 </ItemsRepeater.Layout>
                 <ItemsRepeater.ItemTemplate>
                     <DataTemplate x:DataType="common:PerCoreMetric">
                         <controls:GraphControlWin2D
-                DataPointCustomization ="{StaticResource CPU_DataPointStyle}"
-                LineCustomization              ="{StaticResource CPU_LineStyle}"
-                AxisCustomization              ="{x:Bind controls:DefaultStyles.axis}"
-                DataPoints             ="{x:Bind FrequencyData, Mode=OneWay}"
-                UseIndexBasedGraphing  ="True" />
+                            AxisCustomization="{x:Bind controls:DefaultStyles.axis}"
+                            DataPointCustomization="{StaticResource CPU_DataPointStyle}"
+                            DataPoints="{x:Bind FrequencyData, Mode=OneWay}"
+                            LineCustomization="{StaticResource CPU_LineStyle}"
+                            UseIndexBasedGraphing="True" />
                     </DataTemplate>
                 </ItemsRepeater.ItemTemplate>
             </ItemsRepeater>

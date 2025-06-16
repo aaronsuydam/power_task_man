@@ -32,6 +32,12 @@
     <SolidColorBrush x:Key="MemoryBrush" Color="{StaticResource ColorPurpleRaw}" />
     <SolidColorBrush x:Key="GPUBrush" Color="{StaticResource ColorGreenRaw}" />
     <SolidColorBrush x:Key="DiskBrush" Color="{StaticResource ColorRedOrangeRaw}" />
+
+    <controls:GridStyle
+        x:Name="MinimalGrid"
+        LineColor="DarkGray"
+        ShowGridLines="True" />
+
     <!--  CPU Styles  -->
     <controls:AxisStyle
         x:Key="CPU_AxisStyle"
@@ -51,8 +57,8 @@
     <!--  Memory Styles  -->
     <controls:AxisStyle
         x:Key="Memory_AxisStyle"
-        Margin="0"
-        Color="{StaticResource MemoryBrush}" />
+        Color="{StaticResource MemoryBrush}"
+        Margin="0"/>
     <controls:DataPointStyle
         x:Key="Memory_DataPointStyle"
         PointColor="{StaticResource MemoryBrush}"

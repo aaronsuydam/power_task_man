@@ -6,14 +6,47 @@
     xmlns:List="using:System.Collections.Generic"
     xmlns:controls="using:PowerTaskMan.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:local="using:power_task_man.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:services="using:PowerTaskMan.Services"
-    mc:Ignorable="d">
+    xmlns:services="using:PowerTaskMan.Services">
+
+    <Page.Resources>
+        <Storyboard x:Key="HoverGrow">
+            <DoubleAnimation
+                Storyboard.TargetName="ButtonScale"
+                Storyboard.TargetProperty="ScaleX"
+                To="1.5"
+                Duration="0:0:0.2" />
+
+            <DoubleAnimation
+                Storyboard.TargetName="ButtonScale"
+                Storyboard.TargetProperty="ScaleY"
+                To="1.5"
+                Duration="0:0:0.2" />
+        </Storyboard>
+
+        <Storyboard x:Key="HoverShrink">
+            <DoubleAnimation
+                Storyboard.TargetName="ButtonScale"
+                Storyboard.TargetProperty="ScaleX"
+                To="1.0"
+                Duration="0:0:0.2" />
+            <DoubleAnimation
+                Storyboard.TargetName="ButtonScale"
+                Storyboard.TargetProperty="ScaleY"
+                To="1.0"
+                Duration="0:0:0.2" />
+        </Storyboard>
+    </Page.Resources>
+
 
     <Grid>
-        <controls:CPUMetricsTile Width="800" Height="600" />
 
-        <!--<controls:GraphControlWin2D Width="200" Height="150" DataPoints="{x:Bind perfmod_freq}"/>-->
+        <controls:MemoryTile MaxWidth="400" MaxHeight="500" />
+
+
+
+
     </Grid>
 </Page>

@@ -28,6 +28,7 @@ namespace PowerTaskMan
             services.AddSingleton<Window, MainWindow>();
             services.AddSingleton<ICPUPerfService, CPUPerfService>();
             services.AddSingleton<CPUPerformanceViewModel>();
+            services.AddSingleton<MemoryPerformanceViewModel>();
 
             ServiceProvider = services.BuildServiceProvider();
         }

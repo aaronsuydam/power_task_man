@@ -17,7 +17,7 @@ namespace PowerTaskMan.Controls
 {    
 public class AxisStyle
     {
-        public Color Color { get; set; } = Colors.Gray;
+        public Brush Color { get; set; } = new SolidColorBrush(Colors.Gray);
         public double Margin { get; set; } = 20.0f;
         public bool ShowAxes { get; set; } = true;
         // New property to set a multiplier for gridline calculation
@@ -34,7 +34,7 @@ public class AxisStyle
     }    
     public class GridStyle
     {
-        public Color LineColor { get; set; } = Colors.LightGray;
+        public Brush LineColor { get; set; } = new SolidColorBrush(Colors.LightGray);
         public bool ShowGridLines { get; set; } = true;
     }
 
@@ -47,7 +47,7 @@ public class AxisStyle
     public static class DefaultStyles
     {        public static AxisStyle axis = new AxisStyle
         {
-            Color = Colors.Black,
+            Color = new SolidColorBrush(Colors.Black),
             Margin = 10,
             ShowAxes = true
         };
@@ -66,7 +66,7 @@ public class AxisStyle
 
         public static GridStyle grid = new GridStyle
         {
-            LineColor = Colors.LightGray,
+            LineColor = new SolidColorBrush(Colors.LightGray),
             ShowGridLines = true
         };
     }
@@ -557,7 +557,8 @@ public class AxisStyle
                 VerticalAlignment = CanvasVerticalAlignment.Center
             };            // Draw vertical gridlines.
             int v_gl_count = (int)Math.Floor((right - left) / x_step);
-            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, new SolidColorBrush(this.GridCustomization.LineColor));
+            var line_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.GridCustomization.LineColor);
+            var axis_brush = Win2DHelpers.XamlBrushToICanvasBrush(args.DrawingSession, this.AxisCustomization.Color);
 
             // Only draw gridlines if ShowGridLines is true
             if (GridCustomization.ShowGridLines)
@@ -615,12 +616,12 @@ public class AxisStyle
                 args.DrawingSession.DrawLine(
                     origin.X, origin.Y,
                     x_axis_end.X, x_axis_end.Y,
-                    AxisCustomization.Color, 2);
+                    axis_brush, 2);
 
                 args.DrawingSession.DrawLine(
                     origin.X, origin.Y,
                     y_axis_end.X, y_axis_end.Y,
-                    AxisCustomization.Color, 2);
+                    axis_brush, 2);
             }
         }
 

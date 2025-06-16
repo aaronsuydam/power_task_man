@@ -33,16 +33,16 @@ namespace PowerTaskMan.ViewModels
         [ObservableProperty]
         int usedMemoryPercent = 0;
 
+
         [ObservableProperty]
         string currentFrequency = "0.0 GHz";
 
-        private Task memory_monitor_loop;
         private Task cpu_monitor_loop;
         private Task cpu_utilization_loop;
 
         private CancellationTokenSource cpu_cts;
+        private Task memory_monitor_loop;
         private CancellationTokenSource memory_cts;
-
 
         [ObservableProperty]
         List<ICoordinatePair> cpuFrequencyChartSeries = new List<ICoordinatePair>(
@@ -51,8 +51,8 @@ namespace PowerTaskMan.ViewModels
 
         [ObservableProperty]
         List<ICoordinatePair> memoryUseChartSeries = new List<ICoordinatePair>(
-            Enumerable.Range(0, 61).Select(_ => new CoordinatePair { X = 0, Y = 0 })
-        );
+           Enumerable.Range(0, 61).Select(_ => new CoordinatePair { X = 0, Y = 0 })
+           );
 
         [ObservableProperty]
         List<PerCoreMetric> perCoreCPUFrequencySeries = new List<PerCoreMetric>();
@@ -111,6 +111,14 @@ namespace PowerTaskMan.ViewModels
             StartCPUFreqMonitoring(dq);
         }
 
+        void UpdateMemoryChartData()
+        {
+            var values = MemoryUseChartSeries.Cast<CoordinatePair>().ToList();
+            values.RemoveAt(0);
+            values.Add(new CoordinatePair { X = 0, Y = UsedMemoryPercent });
+            MemoryUseChartSeries = new List<ICoordinatePair>(values);
+            UsedMemoryMBString = UsedMemoryMB.ToString() + " MB";
+        }
         public void StartCPUFreqMonitoring(DispatcherQueue dq)
         {
             if (cpu_monitor_loop != null)
@@ -160,14 +168,7 @@ namespace PowerTaskMan.ViewModels
             cpu_cts.Cancel();
         }
 
-        void UpdateMemoryChartData()
-        {
-            var values = MemoryUseChartSeries.Cast<CoordinatePair>().ToList();
-            values.RemoveAt(0);
-            values.Add(new CoordinatePair { X = 0, Y = UsedMemoryPercent });
-            MemoryUseChartSeries = new List<ICoordinatePair>(values);
-            UsedMemoryMBString = UsedMemoryMB.ToString() + " MB";
-        }
+        
 
         void UpdateCPUFrequencyChart(int new_clock_mhz)
         {
